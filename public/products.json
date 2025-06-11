@@ -1,0 +1,622 @@
+[
+    {
+      "id": "64fbe7db-30c0-4bda-b72d-c284cf24d3e7",
+      "name": "Gucci Product 1",
+      "brand": "Gucci",
+      "categoryId": "shoes",
+      "basePrice": 15050,
+      "description": "Gucci exclusive shoes model 1.",
+      "createdAt": "2025-06-03T17:36:08.789743Z",
+      "tags": [
+        "limited",
+        "premium"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_1",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 5680,
+          "stock": "18"
+        }
+      ]
+    },
+    {
+      "id": "5bb0208e-2ae7-4c98-a90a-aea7b68b6d2f",
+      "name": "Prada Product 2",
+      "brand": "Prada",
+      "categoryId": "watch",
+      "basePrice": 9250,
+      "description": "Prada exclusive watch model 2.",
+      "createdAt": "2025-06-03T17:36:08.789881Z",
+      "tags": [
+        "limited",
+        "premium"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_2",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 9390,
+          "stock": "3"
+        }
+      ]
+    },
+    {
+      "id": "4b93940a-c08c-4f0a-864d-a581a1b6e31a",
+      "name": "Adidas Product 3",
+      "brand": "Adidas",
+      "categoryId": "watch",
+      "basePrice": 18090,
+      "description": "Adidas exclusive watch model 3.",
+      "createdAt": "2025-06-03T17:36:08.789978Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_3",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 11640,
+          "stock": "11"
+        }
+      ]
+    },
+    {
+      "id": "eadc4638-5f8c-4a96-a623-4ff7273586f7",
+      "name": "Balenciaga Product 4",
+      "brand": "Balenciaga",
+      "categoryId": "watch",
+      "basePrice": 5730,
+      "description": "Balenciaga exclusive watch model 4.",
+      "createdAt": "2025-06-03T17:36:08.790172Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_black_dial_4",
+          "color": {
+            "name": "Black Dial",
+            "hex": "#000000"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 18910,
+          "stock": "14"
+        }
+      ]
+    },
+    {
+      "id": "2a015e1a-6f00-468f-a403-0800ff39d6a9",
+      "name": "Rolex Product 5",
+      "brand": "Rolex",
+      "categoryId": "bag",
+      "basePrice": 10530,
+      "description": "Rolex exclusive bag model 5.",
+      "createdAt": "2025-06-03T17:36:08.790228Z",
+      "tags": [
+        "fashion",
+        "minimal"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_5",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 3340,
+          "stock": "14"
+        }
+      ]
+    },
+    {
+      "id": "3e336637-3242-4acc-a9f9-c61d6cd43335",
+      "name": "Rolex Product 6",
+      "brand": "Rolex",
+      "categoryId": "bag",
+      "basePrice": 9490,
+      "description": "Rolex exclusive bag model 6.",
+      "createdAt": "2025-06-03T17:36:08.790273Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_silver_6",
+          "color": {
+            "name": "Silver",
+            "hex": "#C0C0C0"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 12870,
+          "stock": "1"
+        }
+      ]
+    },
+    {
+      "id": "06ec0115-8ad2-40a4-a42d-40c9889e3fed",
+      "name": "Prada Product 7",
+      "brand": "Prada",
+      "categoryId": "watch",
+      "basePrice": 3940,
+      "description": "Prada exclusive watch model 7.",
+      "createdAt": "2025-06-03T17:36:08.790315Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_black_dial_7",
+          "color": {
+            "name": "Black Dial",
+            "hex": "#000000"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 16180,
+          "stock": "16"
+        }
+      ]
+    },
+    {
+      "id": "9b242e92-c272-44e5-9b21-e9018576b60f",
+      "name": "Puma Product 8",
+      "brand": "Puma",
+      "categoryId": "shoes",
+      "basePrice": 7920,
+      "description": "Puma exclusive shoes model 8.",
+      "createdAt": "2025-06-03T17:36:08.790359Z",
+      "tags": [
+        "fashion",
+        "minimal"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_8",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 6260,
+          "stock": "15"
+        }
+      ]
+    },
+    {
+      "id": "669a08af-5e7a-44a1-89f5-988f86d67dac",
+      "name": "Rolex Product 9",
+      "brand": "Rolex",
+      "categoryId": "shoes",
+      "basePrice": 18360,
+      "description": "Rolex exclusive shoes model 9.",
+      "createdAt": "2025-06-03T17:36:08.790393Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_9",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 9210,
+          "stock": "5"
+        }
+      ]
+    },
+    {
+      "id": "3165c637-b6e0-42b4-bc83-804b330ec4fc",
+      "name": "Adidas Product 10",
+      "brand": "Adidas",
+      "categoryId": "watch",
+      "basePrice": 16130,
+      "description": "Adidas exclusive watch model 10.",
+      "createdAt": "2025-06-03T17:36:08.790425Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_10",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 14210,
+          "stock": "19"
+        }
+      ]
+    },
+    {
+      "id": "c542aa74-1242-40d7-b3ab-7e68c995bce2",
+      "name": "Prada Product 11",
+      "brand": "Prada",
+      "categoryId": "accessory",
+      "basePrice": 7410,
+      "description": "Prada exclusive accessory model 11.",
+      "createdAt": "2025-06-03T17:36:08.790444Z",
+      "tags": [
+        "limited",
+        "premium"
+      ],
+      "variants": [
+        {
+          "id": "variant_silver_11",
+          "color": {
+            "name": "Silver",
+            "hex": "#C0C0C0"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 7060,
+          "stock": "12"
+        }
+      ]
+    },
+    {
+      "id": "49cf6caf-6b44-490b-9008-af0768ea4a73",
+      "name": "Gucci Product 12",
+      "brand": "Gucci",
+      "categoryId": "accessory",
+      "basePrice": 17540,
+      "description": "Gucci exclusive accessory model 12.",
+      "createdAt": "2025-06-03T17:36:08.790470Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_12",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 5320,
+          "stock": "3"
+        }
+      ]
+    },
+    {
+      "id": "4b3b0ef7-79f9-43cf-88ee-bbd14fe76300",
+      "name": "Herm\u00e8s Product 13",
+      "brand": "Herm\u00e8s",
+      "categoryId": "watch",
+      "basePrice": 5680,
+      "description": "Herm\u00e8s exclusive watch model 13.",
+      "createdAt": "2025-06-03T17:36:08.790525Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_rose_gold_13",
+          "color": {
+            "name": "Rose Gold",
+            "hex": "#B76E79"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 13380,
+          "stock": "20"
+        }
+      ]
+    },
+    {
+      "id": "c9062328-350b-4876-bf85-01fc927de8bc",
+      "name": "Nike Product 14",
+      "brand": "Nike",
+      "categoryId": "accessory",
+      "basePrice": 5100,
+      "description": "Nike exclusive accessory model 14.",
+      "createdAt": "2025-06-03T17:36:08.790646Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_14",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 4020,
+          "stock": "14"
+        }
+      ]
+    },
+    {
+      "id": "3293a7c6-4749-41db-9378-95abd5a4f896",
+      "name": "Adidas Product 15",
+      "brand": "Adidas",
+      "categoryId": "accessory",
+      "basePrice": 13410,
+      "description": "Adidas exclusive accessory model 15.",
+      "createdAt": "2025-06-03T17:36:08.790728Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_black_dial_15",
+          "color": {
+            "name": "Black Dial",
+            "hex": "#000000"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 17540,
+          "stock": "4"
+        }
+      ]
+    },
+    {
+      "id": "b18cec68-a159-4822-b311-66b75bf3d27a",
+      "name": "Casio Product 16",
+      "brand": "Casio",
+      "categoryId": "bag",
+      "basePrice": 18360,
+      "description": "Casio exclusive bag model 16.",
+      "createdAt": "2025-06-03T17:36:08.790774Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_16",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 3270,
+          "stock": "6"
+        }
+      ]
+    },
+    {
+      "id": "25ed80f7-f765-41b9-8ad2-0b72a3626b3e",
+      "name": "Calvin Klein Product 17",
+      "brand": "Calvin Klein",
+      "categoryId": "accessory",
+      "basePrice": 15740,
+      "description": "Calvin Klein exclusive accessory model 17.",
+      "createdAt": "2025-06-03T17:36:08.790816Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_silver_17",
+          "color": {
+            "name": "Silver",
+            "hex": "#C0C0C0"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 14820,
+          "stock": "10"
+        }
+      ]
+    },
+    {
+      "id": "f9013a23-caa6-41e1-a9b3-fa2b4063db49",
+      "name": "Herm\u00e8s Product 18",
+      "brand": "Herm\u00e8s",
+      "categoryId": "accessory",
+      "basePrice": 6320,
+      "description": "Herm\u00e8s exclusive accessory model 18.",
+      "createdAt": "2025-06-03T17:36:08.790858Z",
+      "tags": [
+        "luxury",
+        "white gold"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_18",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 18230,
+          "stock": "4"
+        }
+      ]
+    },
+    {
+      "id": "289dc35c-7003-4d6b-9aab-8f2521ec0f42",
+      "name": "Gucci Product 19",
+      "brand": "Gucci",
+      "categoryId": "watch",
+      "basePrice": 9270,
+      "description": "Gucci exclusive watch model 19.",
+      "createdAt": "2025-06-03T17:36:08.790899Z",
+      "tags": [
+        "sport",
+        "durable"
+      ],
+      "variants": [
+        {
+          "id": "variant_white_gold_19",
+          "color": {
+            "name": "White Gold",
+            "hex": "#FAE7E2"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 17700,
+          "stock": "11"
+        }
+      ]
+    },
+    {
+      "id": "21977447-f67e-4434-95ba-b614fe168b9d",
+      "name": "Puma Product 20",
+      "brand": "Puma",
+      "categoryId": "watch",
+      "basePrice": 18570,
+      "description": "Puma exclusive watch model 20.",
+      "createdAt": "2025-06-03T17:36:08.790938Z",
+      "tags": [
+        "fashion",
+        "minimal"
+      ],
+      "variants": [
+        {
+          "id": "variant_silver_20",
+          "color": {
+            "name": "Silver",
+            "hex": "#C0C0C0"
+          },
+          "imageUrls": [
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0008",
+            "https://media.rolex.com/image/upload/q_auto/v1/catalogue/2025/upright-bba-with-shadow/m336935-0005"
+          ],
+          "videoUrls": [
+            "https://media.rolex.com/video/upload/q_auto/v1/rolexcom/collection/classic-watches/sky-dweller/videos/24-hour-disc/classic-watches-sky-dweller-24-hour-disc-autoplay"
+          ],
+          "price": 15820,
+          "stock": "20"
+        }
+      ]
+    }
+  ]
