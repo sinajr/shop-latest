@@ -1,0 +1,389 @@
+{
+  "home": {
+    "hero": {
+      "slide1": {
+        "title": "Добро пожаловать в <1>Elite Stuff Trade</1>",
+        "subtitle": "Исследуйте эксклюзивную коллекцию роскошных часов, премиальных кроссовок и дизайнерской одежды."
+      },
+      "slide2": {
+        "title": "Откройте <1>Вневременную Элегантность</1>",
+        "subtitle": "Кураторская подборка часов от всемирно известных брендов, таких как Rolex, Patek Philippe и других."
+      },
+      "slide3": {
+        "title": "Повысьте свой <1>Уровень Стиля</1>",
+        "subtitle": "Последние тренды в дизайнерской одежде и эксклюзивные релизы кроссовок."
+      }
+    },
+    "cta": {
+      "personalizedAdvice": "Получить Персональный Совет",
+      "exploreCollection": "Исследовать Коллекцию"
+    },
+    "logo": {
+      "alt": "Логотип Elite Stuff Trade",
+      "tagline": "Кураторская Роскошь. Непревзойденный Опыт."
+    },
+    "categories": {
+      "title": "Избранные Коллекции",
+      "subtitle": "Откройте для себя кураторские подборки от самых востребованных люксовых брендов мира.",
+      "watches": {
+        "title": "Роскошные Часы",
+        "description": "Исследуйте культовые часы от Rolex, Patek Philippe и Audemars Piguet."
+      },
+      "sneakers": {
+        "title": "Премиальные Кроссовки",
+        "description": "Найдите лимитированные издания Nike, Adidas Yeezy и дизайнерские коллаборации."
+      },
+      "apparel": {
+        "title": "Дизайнерская Одежда",
+        "description": "Магазин последних коллекций от Gucci, Prada, Balenciaga и других."
+      }
+    },
+    "featured": {
+      "title": "Наша Избранная Подборка",
+      "subtitle": "Тщательно отобранные предметы роскоши, подобранные специально для вас.",
+      "noProducts": "В данный момент нет избранных товаров.",
+      "exploreFullCollection": "Смотреть всю коллекцию"
+    },
+    "interactiveLogoBox": {
+      "tagline": "Элитная Роскошь. Непревзойденный Опыт."
+    },
+    "featuredCollections": {
+      "title": "Избранные Коллекции",
+      "subtitle": "Откройте для себя подобранные товары от самых востребованных мировых люксовых брендов.",
+      "card1": {
+        "title": "Роскошные Часы",
+        "description": "Исследуйте культовые часы от Rolex, Patek Philippe и Audemars Piguet."
+      },
+      "card2": {
+        "title": "Элитные Кроссовки",
+        "description": "Найдите лимитированные Nike, Adidas Yeezy и дизайнерские коллаборации."
+      },
+      "card3": {
+        "title": "Дизайнерская Одежда",
+        "description": "Покупайте последние коллекции от Gucci, Prada, Balenciaga и других."
+      }
+    },
+    "featuredSelection": {
+      "title": "Наш Избранный Ассортимент",
+      "subtitle": "Тщательно подобранные предметы роскоши, специально для вас."
+    },
+    "styleAdvisorPromo": {
+      "title": "Нужен Совет по Стилю?",
+      "subtitle": "Найдите свой идеальный роскошный образ. Наш AI Стилист предлагает персональные рекомендации по часам, кроссовкам, одежде и многому другому, с учетом вашего уникального вкуса."
+    },
+    "brandShowcase": {
+      "title": "Покупайте по брендам",
+      "subtitle": "Откройте для себя товары от ваших любимых люксовых брендов.",
+      "ariaLabel": "Показать товары {{brand}}"
+    },
+    "styleAdvisor": {
+      "title": "Нужна помощь со стилем?",
+      "subtitle": "Откройте для себя идеальный люксовый образ. Наш AI-стилист предложит персональные рекомендации по часам, кроссовкам, одежде и многому другому, учитывая ваш уникальный вкус.",
+      "cta": "Попробовать AI-стилиста"
+    }
+  },
+  "navbar": {
+    "logoAlt": "Логотип Elite Stuff Trade",
+    "home": "Главная",
+    "collection": "Коллекция",
+    "advisor": "Советник",
+    "wishlist": "Избранное",
+    "cart": "Корзина",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "login": "Войти"
+  },
+  "footer": {
+    "logoAlt": "Логотип Elite Stuff Trade",
+    "description": "Ваш лучший выбор для покупки роскошных товаров: эксклюзивные часы, премиальные кроссовки, дизайнерская одежда и аксессуары от самых востребованных брендов мира.",
+    "featuredBrands": "Популярные бренды",
+    "viewAllBrands": "Смотреть все бренды...",
+    "support": {
+      "title": "Поддержка",
+      "faq": "Вопросы и ответы",
+      "shipping": "Доставка и возврат",
+      "contact": "Связаться с нами",
+      "terms": "Условия обслуживания",
+      "privacy": "Политика конфиденциальности"
+    },
+    "contact": {
+      "title": "Контакты",
+      "addressLine1": "123 Люксовый проспект, офис 100",
+      "addressLine2": "Беверли-Хиллз, Калифорния 90210, США"
+    },
+    "rightsReserved": "Все права защищены.",
+    "designBy": "Дизайн от"
+  },
+  "collection": {
+    "title": "Люксовая коллекция",
+    "subtitle": "Изучайте тщательно подобранные премиальные товары.",
+    "filteringByBrand": "Фильтр по бренду: <1>{{brand}}</1>",
+    "clearBrand": "Сбросить бренд",
+    "clearBrandFilterAria": "Сбросить фильтр по бренду",
+    "productsFound": "Найдено товаров по фильтрам: {{count}}",
+    "noProducts": "Нет товаров, соответствующих текущим фильтрам.",
+    "clearAllFilters": "Сбросить все фильтры",
+    "showAllProducts": "Показать все товары",
+    "filter": {
+      "searchLabel": "Поиск товаров",
+      "searchPlaceholder": "Название, бренд, описание...",
+      "categoryLabel": "Категория",
+      "allCategories": "Все категории",
+      "brandLabel": "Бренд",
+      "allBrands": "Все бренды",
+      "priceRangeLabel": "Ценовой диапазон",
+      "minPrice": "Мин: ${{price}}",
+      "minPricePlaceholder": "Минимальная цена",
+      "minPriceAria": "Минимальная цена",
+      "maxPrice": "Макс: ${{price}}",
+      "maxPricePlaceholder": "Максимальная цена",
+      "maxPriceAria": "Максимальная цена"
+    }
+  },
+  "advisor": {
+    "title": "Персональный консультант по роскоши",
+    "description": "Расскажите нам о своих предпочтениях, и наш ИИ подберет персональные советы и предложит подходящие товары из нашей коллекции.",
+    "form": {
+      "itemType": "Тип товара",
+      "itemTypePlaceholder": "напр., часы, сумочка, обувь",
+      "itemTypes": {
+        "Watch": "Часы",
+        "Sneakers": "Кроссовки",
+        "Handbag": "Сумка",
+        "Apparel": "Одежда",
+        "Accessory": "Аксессуар",
+        "Other": "Другое"
+      },
+      "favoriteBrand": "Любимый люксовый бренд",
+      "favoriteBrandPlaceholder": "напр., Rolex, Gucci, Nike",
+      "favoriteColor": "Предпочтительный цвет",
+      "favoriteColorPlaceholder": "напр., черный, золотой, белый",
+      "preferredStyle": "Предпочтительный стиль",
+      "preferredStylePlaceholder": "напр., классический, уличный, минимализм",
+      "intendedUseCase": "Предполагаемое использование",
+      "intendedUseCasePlaceholder": "напр., повседневная одежда, особое событие, коллекционирование",
+      "height": "Рост (см)",
+      "heightOptional": "(Необязательно для одежды)",
+      "heightPlaceholder": "напр., 170",
+      "weight": "Вес (кг)",
+      "weightOptional": "(Необязательно для одежды)",
+      "weightPlaceholder": "напр., 65",
+      "submit": "Получить совет по стилю",
+      "submitting": "Получение совета..."
+    },
+    "result": {
+      "yourAdvice": "Ваш персональный совет",
+      "productSuggestions": "Рекомендованные товары:",
+      "noProducts": "Наш ИИ предоставил совет по стилю выше. На этот раз не было выделено конкретных товаров из нашей текущей коллекции, но вы всегда можете ознакомиться с ассортиментом!",
+      "exploreCollection": "Смотреть всю коллекцию"
+    },
+    "error": {
+      "general": "Ошибка",
+      "adviceFailed": "Не удалось получить совет",
+      "validation": "Проверьте правильность введенных данных."
+    },
+    "itemTypePlaceholder": "напр., часы, сумочка, обувь",
+    "brandPlaceholder": "напр., Rolex, Gucci, Nike",
+    "colorPlaceholder": "напр., черный, золотой, белый",
+    "stylePlaceholder": "напр., классический, уличный, минимализм",
+    "useCasePlaceholder": "напр., повседневная одежда, особое событие, коллекционирование",
+    "heightPlaceholder": "напр., 170",
+    "weightPlaceholder": "напр., 65",
+    "getItemType": "Выберите тип товара",
+    "getLuxuryAdvice": "Получить роскошный совет",
+    "advisorTitle": "Персональный консультант по роскоши",
+    "advisorDescription": "Расскажите нам о своих предпочтениях, и наш ИИ создаст персональные рекомендации и предложит подходящие товары из нашей коллекции.",
+    "resultTitle": "Ваш персональный совет",
+    "resultDescription": "На основе ваших предпочтений мы рекомендуем следующие товары:",
+    "noResult": "Товары по вашим предпочтениям не найдены. Попробуйте изменить критерии.",
+    "errorFetchingAdvice": "Ошибка при получении совета. Пожалуйста, попробуйте еще раз.",
+    "itemTypeRequired": "Тип товара обязателен.",
+    "brandRequired": "Любимый люксовый бренд обязателен.",
+    "heroImageAlt": "Стильная женщина с роскошными аксессуарами, включая часы, солнцезащитные очки и сумочки",
+    "heroTitle": "СТИЛЬ АДВИЗОР"
+  },
+  "chatbot": {
+    "title": "ИИ Помощник по Люксу",
+    "description": "Спросите о продуктах, брендах, стилях или наличии. Например: \"Покажите часы Rolex\" или \"Есть ли сумки Gucci?\"",
+    "placeholder": "Спросите о люксовых товарах...",
+    "startConversation": "Начните разговор, написав сообщение ниже.",
+    "viewProducts": "Посмотреть товары:",
+    "thinking": "Думаю...",
+    "errorMessage": "Извините, произошла ошибка при поиске продуктов. Пожалуйста, попробуйте еще раз.",
+    "chatInputAriaLabel": "Ввод сообщения",
+    "sendMessageAriaLabel": "Отправить сообщение",
+    "openOrderPrompt": "Пожалуйста, укажите конкретные детали вашего заказа. Например: 'Я хочу желтые часы Rolex, модель номер 12345, с зеленым циферблатом.' Вы также можете прикрепить изображение. Ваша полная информация профиля будет отправлена вместе с этим сообщением.",
+    "orderSentSuccess": "Ваш запрос на заказ был отправлен нашей команде администраторов. Они свяжутся с вами в ближайшее время для обсуждения деталей.",
+    "orderSentError": "Извините, произошла ошибка при обработке вашего запроса на заказ. Пожалуйста, попробуйте еще раз позже."
+  },
+  "auth": {
+    "signInTab": "Войти",
+    "signUpTab": "Регистрация",
+    "welcomeBackTitle": "С возвращением!",
+    "welcomeBackDescription": "Войдите в свой аккаунт, чтобы исследовать роскошные товары.",
+    "emailLabel": "Электронная почта",
+    "passwordLabel": "Пароль",
+    "emailPlaceholder": "вы@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signInButton": "Войти",
+    "signingInButton": "Вход...",
+    "createAccountTitle": "Создать аккаунт",
+    "createAccountDescription": "Присоединяйтесь к Elite Stuff Trade, чтобы открыть для себя эксклюзивные товары.",
+    "personalInfoLegend": "Личная информация",
+    "firstNameLabel": "Имя",
+    "firstNamePlaceholder": "Иван",
+    "lastNameLabel": "Фамилия",
+    "lastNamePlaceholder": "Иванов",
+    "contactInfoLegend": "Контактная информация",
+    "countryCodeLabel": "Код страны",
+    "countryCodePlaceholder": "Код",
+    "phoneNumberLabel": "Номер телефона",
+    "phoneNumberPlaceholder": "1234567890",
+    "defaultShippingAddressLegend": "Адрес доставки по умолчанию",
+    "streetAddressLabel": "Адрес улицы",
+    "streetAddressPlaceholder": "123 Улица Роскоши",
+    "cityLabel": "Город",
+    "cityPlaceholder": "Беверли-Хиллз",
+    "stateProvinceLabel": "Штат / Провинция",
+    "stateProvincePlaceholder": "КА",
+    "zipPostalCodeLabel": "Почтовый индекс",
+    "zipPostalCodePlaceholder": "90210",
+    "countryLabel": "Страна",
+    "countryPlaceholder": "США",
+    "passwordLegend": "Пароль",
+    "confirmPasswordLabel": "Подтвердить пароль",
+    "createAccountButton": "Создать аккаунт",
+    "creatingAccountButton": "Создание аккаунта...",
+    "toast": {
+      "signUpSuccessTitle": "Поздравляем!",
+      "signUpSuccessDescription": "Ваш аккаунт успешно создан. Добро пожаловать в Elite Stuff Trade!",
+      "signUpFailedTitle": "Ошибка регистрации",
+      "emailAlreadyInUse": "Этот адрес электронной почты уже зарегистрирован. Пожалуйста, войдите или используйте другой адрес.",
+      "unexpectedError": "Произошла непредвиденная ошибка.",
+      "signInSuccessTitle": "Вход выполнен",
+      "signInSuccessDescription": "С возвращением в Elite Stuff Trade!",
+      "signInFailedTitle": "Ошибка входа",
+      "invalidCredentials": "Неверные учетные данные или произошла непредвиденная ошибка."
+    },
+    "validation": {
+      "firstNameRequired": "Имя обязательно.",
+      "lastNameRequired": "Фамилия обязательна.",
+      "invalidEmail": "Неверный адрес электронной почты.",
+      "passwordMinLength": "Пароль должен содержать не менее 6 символов.",
+      "passwordsDontMatch": "Пароли не совпадают.",
+      "countryCodeRequired": "Код страны обязателен.",
+      "invalidCountryCodeFormat": "Неверный формат кода страны (например, +1)",
+      "phoneNumberMinLength": "Номер телефона должен содержать не менее 7 цифр.",
+      "phoneNumberDigitsOnly": "Номер телефона должен содержать только цифры.",
+      "streetAddressRequired": "Адрес улицы обязателен (минимум 3 символа).",
+      "cityRequired": "Город обязателен.",
+      "stateProvinceRequired": "Штат/провинция обязательна.",
+      "zipPostalCodeRequired": "Почтовый индекс обязателен.",
+      "countryRequired": "Страна для адреса обязательна.",
+      "passwordRequired": "Пароль обязателен."
+    }
+  },
+  "profile": {
+    "title": "Ваш Профиль",
+    "accountDetails": "Данные аккаунта",
+    "accountDescription": "Управляйте информацией и настройками аккаунта.",
+    "displayName": "Отображаемое имя",
+    "email": "Электронная почта",
+    "phoneNumber": "Телефон",
+    "notProvided": "Не указано",
+    "userId": "ID пользователя",
+    "editProfile": "Редактировать профиль",
+    "saveChanges": "Сохранить изменения",
+    "cancel": "Отмена",
+    "signOut": "Выйти",
+    "signOutSuccess": "Вы успешно вышли из аккаунта.",
+    "signOutError": "Не удалось выйти. Пожалуйста, попробуйте снова.",
+    "orderHistory": "История заказов",
+    "orderHistoryDescription": "Просмотрите свои прошлые покупки.",
+    "orderId": "Номер заказа",
+    "orderDateUnavailable": "Дата недоступна",
+    "orderTotal": "Итого: ${{amount}}",
+    "orderItems": "Товары:",
+    "orderQtyPrice": "Кол-во: {{qty}} - Цена: ${{price}} за шт.",
+    "orderShippedTo": "Доставка по адресу:",
+    "noOrders": "У вас нет прошлых заказов.",
+    "wishlist": "Избранное",
+    "wishlistDescription": "Товары, которые вы сохранили на потом.",
+    "wishlistEmpty": "Ваш список избранного пуст. Начните добавлять товары!",
+    "removeFromWishlistAria": "Удалить {{name}} из избранного",
+    "savedAddresses": "Сохранённые адреса доставки",
+    "savedAddressesDescription": "Ваши сохранённые адреса доставки. Вы можете редактировать или удалять их.",
+    "default": "По умолчанию",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "noAddresses": "Вы ещё не сохранили ни одного адреса доставки.",
+    "editAddressDialogTitle": "Редактировать адрес доставки",
+    "editAddressDialogDescription": "Обновите данные для вашего адреса доставки.",
+    "priceNotAvailable": "Цена не указана",
+    "remove": "Удалить",
+    "addToCart": "Добавить в корзину",
+    "saving": "Сохранение...",
+    "editProfileDescription": "Обновите данные своего номера телефона.",
+    "welcome": "Добро пожаловать",
+    "memberSince": "Участник с",
+    "settings": "Настройки",
+    "name": "Имя",
+    "phone": "Номер телефона",
+    "shippingAddresses": "Адреса доставки",
+    "defaultAddress": "Адрес по умолчанию",
+    "addAddress": "Добавить новый адрес",
+    "editAddress": "Редактировать адрес",
+    "deleteAddress": "Удалить адрес",
+    "confirmDelete": "Вы уверены, что хотите удалить этот адрес?",
+    "addressDeleted": "Адрес успешно удален.",
+    "addressSaved": "Адрес успешно сохранен.",
+    "addressSetDefault": "Адрес установлен по умолчанию.",
+    "confirmSetDefault": "Вы уверены, что хотите установить этот адрес по умолчанию?",
+    "paymentMethods": "Способы оплаты",
+    "noPaymentMethods": "Способы оплаты пока не сохранены.",
+    "addPaymentMethod": "Добавить новый способ оплаты",
+    "addressDetails": "Детали адреса",
+    "street": "Улица",
+    "city": "Город",
+    "state": "Штат/Провинция",
+    "zip": "Почтовый индекс",
+    "country": "Страна",
+    "makeDefault": "Сделать это адресом по умолчанию",
+    "phoneUpdateSuccess": "Номер телефона успешно обновлен.",
+    "phoneUpdateFailed": "Не удалось обновить номер телефона.",
+    "generalError": "Произошла непредвиденная ошибка.",
+    "loginPrompt": "Пожалуйста, войдите, чтобы просмотреть свой профиль.",
+    "viewDetails": "Посмотреть детали",
+    "date": "Дата",
+    "status": "Статус",
+    "total": "Всего",
+    "items": "Товары",
+    "orderItem": "Товар",
+    "orderQuantity": "Кол-во",
+    "orderPrice": "Цена",
+    "orderTotal": "Сумма заказа",
+    "backToProfile": "Назад в профиль",
+    "emptyOrderHistory": "Вы еще не сделали ни одного заказа.",
+    "emptyWishlist": "Ваш список желаний пуст.",
+    "wishlistAddSuccess": "Товар добавлен в список желаний!",
+    "wishlistRemoveSuccess": "Товар удален из списка желаний!"
+  },
+  "cart": {
+    "yourShoppingCart": "Ваша корзина покупок",
+    "reviewItems": "Просмотрите выбранные вами предметы роскоши ниже.",
+    "loadingCart": "Загрузка вашей корзины...",
+    "cartEmpty": "Ваша корзина пуста",
+    "cartEmptyMessage": "Похоже, вы еще не добавили ни одного предмета роскоши.",
+    "exploreCollection": "Исследовать коллекцию",
+    "colorPrefix": "Цвет:",
+    "priceNA": "Цена не указана",
+    "clearCart": "Очистить корзину",
+    "orderSummary": "Сводка заказа",
+    "subtotal": "Промежуточный итог",
+    "shipping": "Доставка",
+    "estimatedTax": "Предполагаемый налог",
+    "total": "Итого",
+    "proceedToCheckout": "Перейти к оформлению заказа",
+    "continueShopping": "Продолжить покупки"
+  }
+}
