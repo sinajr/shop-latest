@@ -161,7 +161,7 @@ export default function HomePage() {
       {/* Brand Logo Showcase Section - MOVED HERE */}
       <BrandLogoShowcase brands={brandsData} />
 
-      {/* Interactive Logo Box Section - Reduced Height */}
+      {/* Interactive Logo boxx Section - Reduced Height */}
       <section
         className="relative rounded-lg h-[40vh] overflow-hidden flex items-center justify-center"
       >
