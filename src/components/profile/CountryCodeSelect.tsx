@@ -21,20 +21,38 @@ export function CountryCodeSelect({ value, onValueChange, disabled }: CountryCod
         });
     }, []);
 
+    const initialInternalValue = React.useMemo(() => {
+        const country = sortedCountries.find(c => c.dialCode === value);
+        return country ? `${country.dialCode}-${country.isoCode}` : "";
+    }, [value, sortedCountries]);
+
+    const [internalValue, setInternalValue] = React.useState(initialInternalValue);
+
+    React.useEffect(() => {
+        const country = sortedCountries.find(c => c.dialCode === value);
+        setInternalValue(country ? `${country.dialCode}-${country.isoCode}` : "");
+    }, [value, sortedCountries]);
+
+    const handleSelectChange = (selectedValueAndIso: string) => {
+        setInternalValue(selectedValueAndIso);
+        const dialCode = selectedValueAndIso.split('-')[0];
+        onValueChange(dialCode);
+    };
+
     return (
-        <Select onValueChange={onValueChange} value={value} disabled={disabled}>
+        <Select onValueChange={handleSelectChange} value={internalValue} disabled={disabled}>
             <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select country code">
-                    {value ? (
+                    {internalValue ? (
                         <div className="flex items-center">
                             <Image
-                                src={sortedCountries.find(country => country.dialCode === value.split('-')[0])?.flag || ""}
+                                src={sortedCountries.find(country => `${country.dialCode}-${country.isoCode}` === internalValue)?.flag || ""}
                                 alt="flag"
                                 width={20}
                                 height={15}
                                 className="mr-2 rounded"
                             />
-                            {value.split('-')[0]}
+                            {internalValue.split('-')[0]}
                         </div>
                     ) : (
                         "Select country code"

@@ -31,7 +31,7 @@ const signUpSchema = z.object({
     .transform(val => parseInt(val, 10)),
   street: z.string().min(3, { message: "Street address is required (min 3 chars)." }).max(200),
   city: z.string().min(1, { message: "City is required." }).max(100),
-  state: z.string().min(1, { message: "State/Province is required." }).max(100),
+  state: z.string().max(100).optional(),
   zip: z.string().min(3, { message: "ZIP/Postal code is required." }).max(20),
   country: z.string().min(1, { message: "Country for address is required." }).max(100),
 }).refine(data => data.password === data.confirmPassword, {
@@ -65,7 +65,7 @@ export function AuthForm() {
       .transform(val => parseInt(val, 10)),
     street: z.string().min(3, { message: t('auth.validation.streetAddressRequired') }).max(200),
     city: z.string().min(1, { message: t('auth.validation.cityRequired') }).max(100),
-    state: z.string().min(1, { message: t('auth.validation.stateProvinceRequired') }).max(100),
+    state: z.string().max(100).optional(),
     zip: z.string().min(3, { message: t('auth.validation.zipPostalCodeRequired') }).max(20),
     country: z.string().min(1, { message: t('auth.validation.countryRequired') }).max(100),
   }).refine(data => data.password === data.confirmPassword, {
