@@ -1,0 +1,6 @@
+version: 2
+authtoken: 2yfxJGybIayS2HTdg91L8PjOzTB_7hFKE7oLoBqxJsRgseqUa
+tunnels:
+  shop-api:
+    proto: http
+    addr: 9003 
