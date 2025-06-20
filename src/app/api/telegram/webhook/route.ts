@@ -135,40 +135,17 @@ export async function POST(req) {
             await sendTelegramMessage(chatId, '⏳ Please wait.');
             return NextResponse.json({ ok: false });
         }
+
         state.processing = true;
 
-        if (['/cancel', '❌ Cancel'].includes(text)) {
-            resetUserState(chatId);
-            await sendTelegramMessage(chatId, '🚫 Cancelled.', KEYBOARDS.NEW);
-            return NextResponse.json({ ok: true });
-        }
+        // Your business logic continues here...
 
-        if (state.editing && ['Name', 'Brand', 'Description', 'Base Price', 'Category', 'Tags'].includes(text)) {
-            state.editing = false;
-            state.editingField = text.toLowerCase().replace(' ', '');
-            state.step = `edit_${state.editingField}`;
-            await sendTelegramMessage(chatId, `Enter new ${text.toLowerCase()} (example: ...)`, KEYBOARDS.DONE_BACK_CANCEL);
-            state.processing = false;
-            return NextResponse.json({ ok: true });
-        }
-
-        if (state.step?.startsWith('edit_')) {
-            const field = state.editingField;
-            if (text === '✅ Done') {
-                state.editingField = null;
-                state.step = 'variant_confirm';
-                await sendTelegramMessage(chatId, formatProductOverview(state.data), KEYBOARDS.CONFIRM);
-            } else if (text === '⬅️ Back') {
-                state.editing = true;
-                state.editingField = null;
-                state.step = 'variant_confirm';
-                await sendTelegramMessage(chatId, formatProductOverview(state.data), KEYBOARDS.EDIT_FIELDS);
-            } else {
-                state.data[field] = field === 'basePrice' ? parseFloat(text) : (field === 'tags' ? text.split(',').map(t => t.trim()) : text);
-                await sendTelegramMessage(chatId, `You entered: ${text}\nClick ✅ Done to save.`, KEYBOARDS.DONE_BACK_CANCEL);
-            }
-            state.processing = false;
-            return NextResponse.json({ ok: true });
-        }
-
-// ... existing logic continues here (not shown for brevity)
+        await sendTelegramMessage(chatId, '⚠️ Unknown input. Please follow the prompts.');
+        state.processing = false;
+        return NextResponse.json({ ok: true });
+    } catch (e) {
+        console.error('POST error:', e);
+        if (state) state.processing = false;
+        return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    }
+}
