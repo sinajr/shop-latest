@@ -39,6 +39,23 @@ const EDIT_FIELDS_KEYBOARD = {
     one_time_keyboard: false
 };
 
+const DONE_CANCEL_KEYBOARD = {
+    keyboard: [
+        ['✅ Done', '❌ Cancel']
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: false
+};
+
+// Add a new keyboard for Done, Back, Cancel
+const DONE_BACK_CANCEL_KEYBOARD = {
+    keyboard: [
+        ['✅ Done', '⬅️ Back', '❌ Cancel']
+    ],
+    resize_keyboard: true,
+    one_time_keyboard: false
+};
+
 async function sendTelegramMessage(chatId: string, text: string, keyboard = REPLY_KEYBOARD) {
     try {
         const response = await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
@@ -325,6 +342,7 @@ export async function POST(req: Request) {
                     if (text !== '/skip' && text !== '✅ Skip') v.color.name = text;
                     state.variantStep = 'colorHex';
                     await sendTelegramMessage(chatId, 'Enter variant color hex (e.g. #FFFFFF, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'colorHex':
                     if (text !== '/skip' && text !== '✅ Skip') v.color.hex = text;
@@ -332,16 +350,19 @@ export async function POST(req: Request) {
                     v.id = `variant_${(v.color.name || 'default').toLowerCase().replace(/\s+/g, '_')}_${Date.now()}`;
                     state.variantStep = 'variantPrice';
                     await sendTelegramMessage(chatId, 'Enter variant price (number, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'variantPrice':
                     if (text !== '/skip' && text !== '✅ Skip' && !isNaN(parseFloat(text))) v.price = parseFloat(text);
                     state.variantStep = 'variantStock';
                     await sendTelegramMessage(chatId, 'Enter variant stock (number, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'variantStock':
                     if (text !== '/skip' && text !== '✅ Skip' && !isNaN(parseInt(text))) v.stock = parseInt(text);
                     state.variantStep = 'variantImageUrls';
                     await sendTelegramMessage(chatId, 'Enter image URLs (comma-separated, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'variantImageUrls':
                     if (text !== '/skip' && text !== '✅ Skip') {
@@ -349,6 +370,7 @@ export async function POST(req: Request) {
                     }
                     state.variantStep = 'variantVideoUrls';
                     await sendTelegramMessage(chatId, 'Enter video URLs (comma-separated, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'variantVideoUrls':
                     if (text !== '/skip' && text !== '✅ Skip') {
@@ -359,17 +381,20 @@ export async function POST(req: Request) {
                     // Ask if want to add another
                     state.variantStep = 'addAnother';
                     await sendTelegramMessage(chatId, 'Do you want to add another variant? (yes/no)');
+                    state.processing = false;
                     break;
                 case 'addAnother':
                     if (text.toLowerCase() === 'yes') {
                         state.currentVariant = { color: {}, imageUrls: [], videoUrls: [] };
                         state.variantStep = 'colorName';
                         await sendTelegramMessage(chatId, 'Enter variant color name (or tap ✅ Skip to finish):');
+                        state.processing = false;
                     } else {
                         // Finish product creation, show overview
                         await sendProductOverview(chatId, state.data);
                         delete state.currentVariant;
                         delete state.variantStep;
+                        state.processing = false;
                     }
                     break;
             }
@@ -403,32 +428,44 @@ export async function POST(req: Request) {
                 case 'Name':
                     state.step = 'name';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit product name:', REPLY_KEYBOARD);
+                    state.editingField = 'name';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit product name:', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Brand':
                     state.step = 'brand';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit brand:', REPLY_KEYBOARD);
+                    state.editingField = 'brand';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit brand:', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Description':
                     state.step = 'description';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit description:', REPLY_KEYBOARD);
+                    state.editingField = 'description';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit description:', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Base Price':
                     state.step = 'basePrice';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit base price:', REPLY_KEYBOARD);
+                    state.editingField = 'basePrice';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit base price:', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Category':
                     state.step = 'categoryId';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit category:', REPLY_KEYBOARD);
+                    state.editingField = 'categoryId';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit category:', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Tags':
                     state.step = 'tags';
                     state.editing = false;
-                    await sendTelegramMessage(chatId, 'Edit tags (comma-separated):', REPLY_KEYBOARD);
+                    state.editingField = 'tags';
+                    state.tempEditValue = '';
+                    await sendTelegramMessage(chatId, 'Edit tags (comma-separated):', DONE_BACK_CANCEL_KEYBOARD);
                     return NextResponse.json({ ok: true });
                 case 'Variants':
                     // For now, just restart variant entry
@@ -447,6 +484,43 @@ export async function POST(req: Request) {
                     await sendTelegramMessage(chatId, '🚫 Product creation cancelled.', NEW_PRODUCT_KEYBOARD);
                     return NextResponse.json({ ok: true });
             }
+        }
+
+        // Handle editing a specific field (with Done/Cancel)
+        if (state.editingField) {
+            if (text === '❌ Cancel') {
+                state.editingField = null;
+                state.tempEditValue = null;
+                await sendProductOverview(chatId, state.data);
+                return NextResponse.json({ ok: true });
+            }
+            if (text === '⬅️ Back') {
+                state.editingField = null;
+                state.tempEditValue = null;
+                state.editing = true;
+                await sendTelegramMessage(chatId, 'Which field do you want to edit?', EDIT_FIELDS_KEYBOARD);
+                return NextResponse.json({ ok: true });
+            }
+            if (text === '✅ Done') {
+                if (state.tempEditValue !== undefined && state.tempEditValue !== null && state.tempEditValue !== '') {
+                    if (state.editingField === 'basePrice') {
+                        state.data[state.editingField] = parseFloat(state.tempEditValue);
+                    } else if (state.editingField === 'tags') {
+                        state.data[state.editingField] = state.tempEditValue.split(',').map((tag: any) => tag.trim()).filter((tag: string) => !!tag);
+                    } else {
+                        state.data[state.editingField] = state.tempEditValue;
+                    }
+                    state.lastEditedField = state.editingField;
+                }
+                state.editingField = null;
+                state.tempEditValue = null;
+                await sendProductOverview(chatId, state.data, state.lastEditedField);
+                return NextResponse.json({ ok: true });
+            }
+            // Store the user's input as the temp value
+            state.tempEditValue = text;
+            await sendTelegramMessage(chatId, `You entered: ${text}\nClick ✅ Done to save, ⬅️ Back to return, or ❌ Cancel.`, DONE_BACK_CANCEL_KEYBOARD);
+            return NextResponse.json({ ok: true });
         }
 
         return NextResponse.json({ ok: true });
@@ -484,14 +558,14 @@ async function askCurrentStep(chatId: any, state: any) {
 }
 
 // Helper to send product overview and ask for confirmation
-async function sendProductOverview(chatId: any, data: any) {
+async function sendProductOverview(chatId: any, data: any, lastEditedField?: string) {
     let overview = `<b>Product Overview</b>\n`;
-    overview += `Name: ${data.name || '-'}\n`;
-    overview += `Brand: ${data.brand || '-'}\n`;
-    overview += `Description: ${data.description || '-'}\n`;
-    overview += `Base Price: ${data.basePrice || '-'}\n`;
-    overview += `Category: ${data.categoryId || '-'}\n`;
-    overview += `Tags: ${(data.tags && data.tags.length) ? data.tags.join(', ') : '-'}\n`;
+    overview += `${lastEditedField === 'name' ? '✅ ' : ''}Name: ${data.name || '-'}\n`;
+    overview += `${lastEditedField === 'brand' ? '✅ ' : ''}Brand: ${data.brand || '-'}\n`;
+    overview += `${lastEditedField === 'description' ? '✅ ' : ''}Description: ${data.description || '-'}\n`;
+    overview += `${lastEditedField === 'basePrice' ? '✅ ' : ''}Base Price: ${data.basePrice || '-'}\n`;
+    overview += `${lastEditedField === 'categoryId' ? '✅ ' : ''}Category: ${data.categoryId || '-'}\n`;
+    overview += `${lastEditedField === 'tags' ? '✅ ' : ''}Tags: ${(data.tags && data.tags.length) ? data.tags.join(', ') : '-'}\n`;
     overview += `Variants:`;
     if (data.variants && data.variants.length) {
         data.variants.forEach((v: any, i: number) => {
