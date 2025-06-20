@@ -116,7 +116,6 @@ export async function POST(req) {
         const photo = message.photo;
         const video = message.video;
 
-        // Reject requests from non-admins silently (no response to avoid spam loop)
         if (!ADMIN_TELEGRAM_IDS.includes(chatId)) {
             console.warn(`❌ Unauthorized Telegram user tried access: ${chatId}`);
             return NextResponse.json({ ok: true });
@@ -143,8 +142,27 @@ export async function POST(req) {
 
         state.processing = true;
 
-        // Your business logic continues here...
+        if (['/start', '➕ New Product'].includes(text)) {
+            userStates[chatId] = {
+                step: 'name',
+                data: { name: '', brand: '', description: '', basePrice: '', categoryId: '', tags: [], variants: [] },
+                currentVariant: null,
+                variantStep: null,
+                editing: false,
+                editingField: null,
+                processing: false
+            };
+            await sendTelegramMessage(chatId, '👋 Starting a new product. Please enter product name:', KEYBOARDS.REPLY);
+            return NextResponse.json({ ok: true });
+        }
 
+        if (text === '❌ Cancel') {
+            resetUserState(chatId);
+            await sendTelegramMessage(chatId, '🚫 Cancelled. Type /start or tap ➕ New Product to begin again.', KEYBOARDS.NEW);
+            return NextResponse.json({ ok: true });
+        }
+
+        // fallback response
         await sendTelegramMessage(chatId, '⚠️ Unknown input. Please follow the prompts.');
         state.processing = false;
         return NextResponse.json({ ok: true });
