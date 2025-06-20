@@ -4,7 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`;
-const ADMIN_TELEGRAM_ID = '5900684159';
+
+// Support multiple admins (comma-separated in .env or array directly)
+const ADMIN_TELEGRAM_IDS = (process.env.ADMIN_TELEGRAM_IDS || '5900684159')
+    .split(',')
+    .map(id => id.trim());
 
 const userStates = {};
 
@@ -112,9 +116,10 @@ export async function POST(req) {
         const photo = message.photo;
         const video = message.video;
 
-        if (chatId !== ADMIN_TELEGRAM_ID) {
-            await sendTelegramMessage(chatId, '❌ Unauthorized.', KEYBOARDS.REPLY);
-            return NextResponse.json({ ok: false }, { status: 403 });
+        // Reject requests from non-admins silently (no response to avoid spam loop)
+        if (!ADMIN_TELEGRAM_IDS.includes(chatId)) {
+            console.warn(`❌ Unauthorized Telegram user tried access: ${chatId}`);
+            return NextResponse.json({ ok: true });
         }
 
         if (!userStates[chatId]) {
