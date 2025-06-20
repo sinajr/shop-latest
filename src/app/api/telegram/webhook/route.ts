@@ -406,6 +406,7 @@ export async function POST(req: Request) {
             console.log('Publish button pressed');
             console.log('Publishing product with data:', JSON.stringify(state.data, null, 2));
             await handleProductCreation(chatId, state.data);
+            state.processing = false;
             delete userStates[chatId];
             return NextResponse.json({ ok: true });
         }
@@ -413,6 +414,7 @@ export async function POST(req: Request) {
             console.log('Edit button pressed');
             await sendTelegramMessage(chatId, 'Which field do you want to edit?', EDIT_FIELDS_KEYBOARD);
             state.editing = true;
+            state.processing = false;
             return NextResponse.json({ ok: true });
         }
         if (text === '❌ Cancel') {
@@ -486,12 +488,13 @@ export async function POST(req: Request) {
             }
         }
 
-        // Handle editing a specific field (with Done/Cancel)
+        // Handle editing a specific field (with Done/Cancel/Back)
         if (state.editingField) {
             if (text === '❌ Cancel') {
                 state.editingField = null;
                 state.tempEditValue = null;
                 await sendProductOverview(chatId, state.data);
+                state.processing = false;
                 return NextResponse.json({ ok: true });
             }
             if (text === '⬅️ Back') {
@@ -499,27 +502,37 @@ export async function POST(req: Request) {
                 state.tempEditValue = null;
                 state.editing = true;
                 await sendTelegramMessage(chatId, 'Which field do you want to edit?', EDIT_FIELDS_KEYBOARD);
+                state.processing = false;
                 return NextResponse.json({ ok: true });
             }
             if (text === '✅ Done') {
                 if (state.tempEditValue !== undefined && state.tempEditValue !== null && state.tempEditValue !== '') {
                     if (state.editingField === 'basePrice') {
-                        state.data[state.editingField] = parseFloat(state.tempEditValue);
+                        if (!isNaN(parseFloat(state.tempEditValue))) {
+                            state.data[state.editingField] = parseFloat(state.tempEditValue);
+                        }
                     } else if (state.editingField === 'tags') {
-                        state.data[state.editingField] = state.tempEditValue.split(',').map((tag: any) => tag.trim()).filter((tag: string) => !!tag);
+                        const tagsArr = state.tempEditValue.split(',').map((tag: any) => tag.trim()).filter((tag: string) => !!tag);
+                        if (tagsArr.length > 0) {
+                            state.data[state.editingField] = tagsArr;
+                        }
                     } else {
-                        state.data[state.editingField] = state.tempEditValue;
+                        if (state.tempEditValue.trim() !== '') {
+                            state.data[state.editingField] = state.tempEditValue;
+                        }
                     }
                     state.lastEditedField = state.editingField;
                 }
                 state.editingField = null;
                 state.tempEditValue = null;
                 await sendProductOverview(chatId, state.data, state.lastEditedField);
+                state.processing = false;
                 return NextResponse.json({ ok: true });
             }
             // Store the user's input as the temp value
             state.tempEditValue = text;
             await sendTelegramMessage(chatId, `You entered: ${text}\nClick ✅ Done to save, ⬅️ Back to return, or ❌ Cancel.`, DONE_BACK_CANCEL_KEYBOARD);
+            state.processing = false;
             return NextResponse.json({ ok: true });
         }
 
