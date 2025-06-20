@@ -180,6 +180,34 @@ export default function ProductDetailPage() {
     return field[lang] || field['en'] || Object.values(field)[0] || '';
   };
 
+  // --- IMAGE GALLERY: Gather all unique images from all variants ---
+  const allImageUrls = Array.from(new Set(
+    (product.variants || [])
+      .flatMap(variant => variant.imageUrls || [])
+      .filter(Boolean)
+  ));
+
+  // --- VIDEO HANDLING: Support direct video and YouTube/Vimeo embeds ---
+  function getVideoEmbedType(url: string | null): 'video' | 'youtube' | 'vimeo' | null {
+    if (!url) return null;
+    if (/youtube\.com|youtu\.be/.test(url)) return 'youtube';
+    if (/vimeo\.com/.test(url)) return 'vimeo';
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return 'video';
+    // fallback: treat as direct video if it starts with http(s)
+    if (/^https?:\/\//.test(url)) return 'video';
+    return null;
+  }
+
+  function getYouTubeId(url: string): string | null {
+    const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/);
+    return match ? match[1] : null;
+  }
+
+  function getVimeoId(url: string): string | null {
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    return match ? match[1] : null;
+  }
+
   return (
     <div className="container mx-auto py-8 lg:py-12">
       <Button variant="outline" onClick={() => router.back()} className="mb-8 group">
@@ -214,15 +242,18 @@ export default function ProductDetailPage() {
                       key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-img-${selectedImageIndex}` : `img-${selectedImageIndex}`}
                     />
                   </div>
-                  {effectiveImageUrls.length > 1 && (
+                  {allImageUrls.length > 1 && (
                     <div className="flex space-x-2 mt-3 p-2 overflow-x-auto justify-center">
-                      {effectiveImageUrls.map((rawUrl, index) => {
+                      {allImageUrls.map((rawUrl, index) => {
                         const sanitizedThumbnailUrl = sanitizeImageUrlString(rawUrl);
                         if (!sanitizedThumbnailUrl) return null;
                         return (
                           <button
-                            key={`${currentDisplayVariant?.id}-thumb-${index}`}
-                            onClick={() => handleThumbnailClick(index)}
+                            key={`all-thumb-${index}`}
+                            onClick={() => {
+                              setSelectedImageIndex(index);
+                              setMainImageError(false);
+                            }}
                             className={cn(
                               "relative w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 shrink-0",
                               selectedImageIndex === index ? "border-primary ring-2 ring-primary" : "border-transparent hover:border-muted-foreground"
@@ -245,19 +276,53 @@ export default function ProductDetailPage() {
               </TabsContent>
               <TabsContent value="video">
                 <div className="p-1 md:p-2">
-                  {firstVideoUrl ? (
-                    <div className="aspect-video bg-black rounded-md overflow-hidden">
-                      <video
-                        src={firstVideoUrl}
-                        controls
-                        className="w-full h-full object-contain"
-                        preload="metadata"
-                        key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-video` : 'video'}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  ) : (
+                  {firstVideoUrl ? (() => {
+                    const embedType = getVideoEmbedType(firstVideoUrl);
+                    if (embedType === 'youtube') {
+                      const ytId = getYouTubeId(firstVideoUrl);
+                      return ytId ? (
+                        <div className="aspect-video bg-black rounded-md overflow-hidden">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${ytId}`}
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-yt` : 'yt'}
+                          />
+                        </div>
+                      ) : null;
+                    } else if (embedType === 'vimeo') {
+                      const vimeoId = getVimeoId(firstVideoUrl);
+                      return vimeoId ? (
+                        <div className="aspect-video bg-black rounded-md overflow-hidden">
+                          <iframe
+                            src={`https://player.vimeo.com/video/${vimeoId}`}
+                            title="Vimeo video player"
+                            allow="autoplay; fullscreen; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-vimeo` : 'vimeo'}
+                          />
+                        </div>
+                      ) : null;
+                    } else if (embedType === 'video') {
+                      return (
+                        <div className="aspect-video bg-black rounded-md overflow-hidden">
+                          <video
+                            src={firstVideoUrl}
+                            controls
+                            className="w-full h-full object-contain"
+                            preload="metadata"
+                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-video` : 'video'}
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })() : (
                     <div className="aspect-video flex items-center justify-center bg-muted/30 rounded-md">
                       <p className="text-muted-foreground">No video available for this variant.</p>
                     </div>

@@ -1,4 +1,4 @@
-// Full Telegram bot with strict numeric price validation
+// Full Telegram bot with multi-image & multi-video uploads per-variant
 import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase/admin';
 
@@ -119,89 +119,6 @@ async function handleProductCreation(
     }
 }
 
-async function handleVariantStep(
-    chatId: string,
-    text: string,
-    state: ProductState
-) {
-    const sub = state.variantStep!;
-    state.variant ??= {};
-
-    switch (sub) {
-        case 'colorName':
-            state.variant.color = { name: text };
-            state.variantStep = 'colorHex';
-            return sendTelegramMessage(chatId, '🎨 Enter color HEX (e.g. #6e371b):');
-
-        case 'colorHex':
-            state.variant.color.hex = text;
-            state.variantStep = 'colorId';
-            return sendTelegramMessage(chatId, '🆔 Enter color ID (e.g. variant_rose_gold_1):');
-
-        case 'colorId':
-            state.variant.color.id = text;
-            state.variantStep = 'price';
-            return sendTelegramMessage(chatId, '💰 Enter variant price (numeric only):');
-
-        case 'price':
-            const vp = parseFloat(text);
-            if (isNaN(vp)) {
-                return sendTelegramMessage(
-                    chatId,
-                    '❌ Invalid price. Please enter a valid number (e.g. 19.99):'
-                );
-            }
-            state.variant.price = vp;
-            state.variantStep = 'stock';
-            return sendTelegramMessage(chatId, '📦 Enter stock qty (integer):');
-
-        case 'stock':
-            state.variant.stock = parseInt(text) || 0;
-            state.variantStep = 'images';
-            return sendTelegramMessage(
-                chatId,
-                '🖼️ Enter image URLs (one per line or type "skip"):'
-            );
-
-        case 'images':
-            if (/skip|✅ Skip/i.test(text)) {
-                state.variant.imageUrls = [];
-            } else {
-                state.variant.imageUrls = text
-                    .split(/\r?\n/)
-                    .map(u => u.trim())
-                    .filter(Boolean);
-            }
-            state.variantStep = 'videos';
-            return sendTelegramMessage(
-                chatId,
-                '🎥 Enter video URLs (one per line or type "skip"):'
-            );
-
-        case 'videos':
-            if (/skip|✅ Skip/i.test(text)) {
-                state.variant.videoUrls = [];
-            } else {
-                state.variant.videoUrls = text
-                    .split(/\r?\n/)
-                    .map(u => u.trim())
-                    .filter(Boolean);
-            }
-
-            state.data.variants.push(state.variant);
-            delete state.variant;
-            delete state.variantStep;
-
-            await sendTelegramMessage(
-                chatId,
-                `✅ Variant added!\n\n${formatProductOverview(state.data)}`,
-                KEYBOARDS.VARIANTS_OVERVIEW
-            );
-            state.step = 'variants';
-            return;
-    }
-}
-
 export async function POST(req: Request) {
     const body = await req.json();
     const msg = body.message;
@@ -209,14 +126,16 @@ export async function POST(req: Request) {
 
     const chatId = String(msg.chat.id);
     const text = msg.text?.trim() || '';
+    const isPhoto = Array.isArray(msg.photo);
+    const isVideo = Boolean(msg.video);
 
-    // Auth check
+    // Auth
     if (!ADMIN_TELEGRAM_IDS.includes(chatId)) {
         console.warn('Unauthorized:', chatId);
         return NextResponse.json({ ok: true });
     }
 
-    // Initialize state
+    // Init state
     if (!userStates[chatId]) {
         userStates[chatId] = {
             step: 'start',
@@ -255,6 +174,7 @@ export async function POST(req: Request) {
             processing: false
         };
         await sendTelegramMessage(chatId, '👋 Starting a new product. Enter product name:');
+        state.processing = false;
         return NextResponse.json({ ok: true });
     }
 
@@ -266,6 +186,7 @@ export async function POST(req: Request) {
             '🚫 Cancelled. Type /start or ➕ New Product to begin.',
             KEYBOARDS.NEW
         );
+        state.processing = false;
         return NextResponse.json({ ok: true });
     }
 
@@ -297,14 +218,75 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true });
     }
 
-    // Variant sub-flow
-    if (state.variantStep) {
-        await handleVariantStep(chatId, text, state);
+    // Variant sub-flow: handling attachments for images/videos
+    if (state.variantStep === 'images') {
+        // first time entering this step?
+        if (!state.variant) state.variant = { imageUrls: [], videoUrls: [] };
+
+        // photo uploads
+        if (isPhoto) {
+            const fileId = msg.photo![msg.photo!.length - 1].file_id;
+            state.variant.imageUrls.push(fileId);
+            await sendTelegramMessage(
+                chatId,
+                `🖼️ Image received (#${state.variant.imageUrls.length}). Send more or tap ✅ Done.`
+            );
+            state.processing = false;
+            return NextResponse.json({ ok: true });
+        }
+
+        // Done collecting images?
+        if (text === '✅ Done') {
+            // move on to videos
+            state.variantStep = 'videos';
+            await sendTelegramMessage(chatId, '🎥 Now send videos (as Telegram videos). When finished, tap ✅ Done.');
+            state.processing = false;
+            return NextResponse.json({ ok: true });
+        }
+
+        // reminder
+        await sendTelegramMessage(chatId, '📤 Please upload images now. Send as many as you like, then tap ✅ Done.');
         state.processing = false;
         return NextResponse.json({ ok: true });
     }
 
-    // Main step switch
+    if (state.variantStep === 'videos') {
+        if (!state.variant.videoUrls) state.variant.videoUrls = [];
+
+        if (isVideo) {
+            const fileId = msg.video!.file_id;
+            state.variant.videoUrls.push(fileId);
+            await sendTelegramMessage(
+                chatId,
+                `🎥 Video received (#${state.variant.videoUrls.length}). Send more or tap ✅ Done.`
+            );
+            state.processing = false;
+            return NextResponse.json({ ok: true });
+        }
+
+        if (text === '✅ Done') {
+            // finalize variant
+            state.data.variants.push(state.variant);
+            delete state.variant;
+            delete state.variantStep;
+
+            await sendTelegramMessage(
+                chatId,
+                `✅ Variant added!\n\n${formatProductOverview(state.data)}`,
+                KEYBOARDS.VARIANTS_OVERVIEW
+            );
+            state.step = 'variants';
+            state.processing = false;
+            return NextResponse.json({ ok: true });
+        }
+
+        await sendTelegramMessage(chatId, '📤 Please upload videos now, then tap ✅ Done.');
+        state.processing = false;
+        return NextResponse.json({ ok: true });
+    }
+
+    // Main flow & edit flow
+    // (unchanged from before: name→brand→…→variants, edit select, publish etc.)
     switch (state.step) {
         case 'name':
             if (state.editing) {
@@ -422,6 +404,7 @@ export async function POST(req: Request) {
         case 'variants':
             if (text === '➕ Add Variant' || text === '➕ Add Another Variant') {
                 state.variantStep = 'colorName';
+                state.variant = { imageUrls: [], videoUrls: [] };
                 await sendTelegramMessage(chatId, '🎨 Enter color name (e.g. light green suede):');
             } else if (text === '✏️ Edit') {
                 state.step = 'edit_select';
@@ -457,6 +440,7 @@ export async function POST(req: Request) {
                 );
             } else if (text === 'Variants') {
                 state.variantStep = 'colorName';
+                state.variant = { imageUrls: [], videoUrls: [] };
                 state.step = 'variants';
                 await sendTelegramMessage(chatId, '🎨 Enter color name for new variant:');
             } else if (text === '⬅️ Back') {
