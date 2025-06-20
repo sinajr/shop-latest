@@ -1,5 +1,3 @@
-
-
 import { NextResponse } from 'next/server';
 import { getAdminDb } from '@/lib/firebase/admin';
 import { v4 as uuidv4 } from 'uuid';
@@ -50,9 +48,20 @@ async function handleProductCreation(chatId, data) {
             basePrice: parseFloat(data.basePrice || '0'),
             categoryId: data.categoryId,
             tags: data.tags || [],
-            variants: data.variants || [],
+            variants: (data.variants || []).map(v => ({
+                id: v.id || `variant_${Date.now()}`,
+                color: {
+                    name: v.color?.name || '',
+                    hex: v.color?.hex || ''
+                },
+                price: parseFloat(v.price || '0'),
+                stock: String(v.stock || '0'),
+                imageUrls: Array.isArray(v.imageUrls) ? v.imageUrls : [],
+                videoUrls: Array.isArray(v.videoUrls) ? v.videoUrls : [],
+            })),
             createdAt: new Date().toISOString()
         };
+
         const docRef = await db.collection('products').add(productData);
         const productId = docRef.id;
         await docRef.update({ id: productId });
@@ -131,10 +140,6 @@ export async function POST(req) {
             return NextResponse.json({ ok: true });
         }
 
-        // Handle editing inputs here...
-        // You'll add more input handlers for edit flow
-
-        // Simplified flow for normal field entry (e.g., name, brand...)
         const steps = ['name', 'brand', 'description', 'basePrice', 'categoryId', 'tags'];
         const next = () => { const idx = steps.indexOf(state.step); return steps[idx + 1] || null; };
 
