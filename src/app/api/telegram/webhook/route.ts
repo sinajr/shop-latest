@@ -275,30 +275,36 @@ export async function POST(req: Request) {
                     state.data.name = text;
                     state.step = 'brand';
                     await sendTelegramMessage(chatId, 'Enter the brand (or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'brand':
                     state.data.brand = text;
                     state.step = 'description';
                     await sendTelegramMessage(chatId, 'Enter the description (or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'description':
                     state.data.description = text;
                     state.step = 'basePrice';
                     await sendTelegramMessage(chatId, 'Enter the base price (number, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'basePrice':
                     if (isNaN(parseFloat(text))) {
                         await sendTelegramMessage(chatId, '❌ Please enter a valid number for the base price or tap ✅ Skip.');
+                        state.processing = false;
                         return NextResponse.json({ ok: true });
                     }
                     state.data.basePrice = parseFloat(text);
                     state.step = 'categoryId';
                     await sendTelegramMessage(chatId, 'Enter the category (or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'categoryId':
                     state.data.categoryId = text;
                     state.step = 'tags';
                     await sendTelegramMessage(chatId, 'Enter tags (comma-separated, or tap ✅ Skip):');
+                    state.processing = false;
                     break;
                 case 'tags':
                     state.data.tags = text.split(',').map((tag: any) => tag.trim()).filter((tag: string) => !!tag);
@@ -306,6 +312,7 @@ export async function POST(req: Request) {
                     await sendTelegramMessage(chatId, 'Let\'s add a variant. Enter variant color name (or tap ✅ Skip to finish):');
                     state.currentVariant = { color: {}, imageUrls: [], videoUrls: [] };
                     state.variantStep = 'colorName';
+                    state.processing = false;
                     return NextResponse.json({ ok: true });
             }
         }
