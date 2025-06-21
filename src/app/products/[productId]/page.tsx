@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { fetchProductById } from '@/services/productService';
@@ -41,7 +41,6 @@ function sanitizeImageUrlString(urlStr: string | undefined | null): string | nul
   return null;
 }
 
-
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -62,15 +61,15 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (productId) {
       setIsLoading(true);
-      setSelectedImageIndex(0);
-      setMainImageError(false);
       fetchProductById(productId)
         .then((data) => {
-          setProduct(data);
-          if (data && data.variants && data.variants.length > 0) {
-            setSelectedVariant(data.variants[0]);
+          if (data) {
+            setProduct(data);
+            if (data.variants && data.variants.length > 0) {
+              setSelectedVariant(data.variants[0]);
+            }
           } else {
-            setSelectedVariant(null);
+            setProduct(null);
           }
         })
         .catch(error => {
@@ -87,15 +86,57 @@ export default function ProductDetailPage() {
     }
   }, [productId, toast]);
 
-  const handleThumbnailClick = (index: number) => {
-    setSelectedImageIndex(index);
-    setMainImageError(false);
-  };
-
   const handleVariantSelect = (variant: ProductVariant) => {
     setSelectedVariant(variant);
     setSelectedImageIndex(0);
     setMainImageError(false);
+  };
+
+  const currentDisplayVariant = useMemo(() => {
+    return selectedVariant || (product?.variants && product.variants.length > 0 ? product.variants[0] : null);
+  }, [selectedVariant, product]);
+
+  const effectiveImageUrls = useMemo(() => currentDisplayVariant?.imageUrls?.map(sanitizeImageUrlString).filter(Boolean) as string[] || [], [currentDisplayVariant]);
+  const effectiveVideoUrls = useMemo(() => currentDisplayVariant?.videoUrls?.map(sanitizeImageUrlString).filter(Boolean) as string[] || [], [currentDisplayVariant]);
+
+  const imageToDisplay = useMemo(() => {
+    if (mainImageError || !effectiveImageUrls[selectedImageIndex]) {
+      return 'https://placehold.co/800x600.png';
+    }
+    return effectiveImageUrls[selectedImageIndex];
+  }, [mainImageError, selectedImageIndex, effectiveImageUrls]);
+
+  const firstVideoUrl = useMemo(() => effectiveVideoUrls.length > 0 ? effectiveVideoUrls[0] : null, [effectiveVideoUrls]);
+
+  const displayPrice = currentDisplayVariant?.price !== undefined ? currentDisplayVariant.price : product?.basePrice;
+
+  const handleAddToCart = () => {
+    if (!product || !currentDisplayVariant) return;
+
+    const productWithVariantDetails: Product & { selectedVariantId?: string, selectedColorName?: string, variantPrice?: number, imageUrls?: string[] } = {
+      ...product,
+      selectedVariantId: currentDisplayVariant.id,
+      selectedColorName: currentDisplayVariant.color.name,
+      variantPrice: currentDisplayVariant.price,
+      imageUrls: currentDisplayVariant.imageUrls,
+    };
+    addToCart(productWithVariantDetails, 1);
+  };
+
+  const handleToggleWishlist = () => {
+    if (!isWishlistLoaded || !product) return;
+    const isWishlisted = isInWishlist(product.id);
+    if (isWishlisted) {
+      removeFromWishlist(product.id, getTranslated(product.name));
+    } else {
+      addToWishlist(product.id, getTranslated(product.name));
+    }
+  };
+
+  const getTranslated = (field: string | { [lang: string]: string } | undefined) => {
+    if (!field) return '';
+    if (typeof field === 'string') return field;
+    return field[lang] || field['en'] || Object.values(field)[0] || '';
   };
 
   if (isLoading) {
@@ -123,90 +164,22 @@ export default function ProductDetailPage() {
     );
   }
 
-  const handleToggleWishlist = () => {
-    if (!isWishlistLoaded || !product) return;
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id, product.name);
-    } else {
-      addToWishlist(product.id, product.name);
-    }
-  };
-
   const isWishlisted = isWishlistLoaded ? isInWishlist(product.id) : false;
 
-  // currentDisplayVariant will be the selectedVariant if one is chosen, otherwise the first variant.
-  const currentDisplayVariant = selectedVariant || (product.variants && product.variants.length > 0 ? product.variants[0] : null);
-
-  const effectiveImageUrls = currentDisplayVariant?.imageUrls || [];
-  const effectiveVideoUrls = currentDisplayVariant?.videoUrls || [];
-
-  const rawCurrentImageSrc = effectiveImageUrls.length > selectedImageIndex
-    ? effectiveImageUrls[selectedImageIndex]
-    : null;
-  const sanitizedCurrentImageSrc = sanitizeImageUrlString(rawCurrentImageSrc);
-  const imageToDisplay = mainImageError || !sanitizedCurrentImageSrc
-    ? 'https://placehold.co/800x600.png'
-    : sanitizedCurrentImageSrc;
-
-  const firstVideoUrl = effectiveVideoUrls.length > 0 ? sanitizeImageUrlString(effectiveVideoUrls[0]) : null;
-
-  // Price display should prioritize selected variant's price, then product's base price.
-  const displayPrice = currentDisplayVariant?.price !== undefined ? currentDisplayVariant.price : product.basePrice;
-
-  const handleAddToCart = () => {
-    if (!product) return;
-    // Use currentDisplayVariant which reflects the user's selection
-    const variantToCart = currentDisplayVariant;
-
-    if (variantToCart) {
-      const productWithVariantDetails: Product & { selectedVariantId?: string, selectedColorName?: string, variantPrice?: number, imageUrls?: string[] } = {
-        ...product,
-        selectedVariantId: variantToCart.id,
-        selectedColorName: variantToCart.color.name,
-        variantPrice: variantToCart.price,
-        imageUrls: variantToCart.imageUrls,
-        basePrice: product.basePrice,
-      };
-      addToCart(productWithVariantDetails, 1);
-    } else {
-      // Fallback if somehow no variant is determined (e.g. product has no variants at all)
-      addToCart(product, 1);
+  const getVideoEmbedUrl = (url: string) => {
+    let videoId;
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      videoId = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/)?.[1];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
     }
+    if (url.includes('vimeo.com')) {
+      videoId = url.match(/vimeo\.com\/(\d+)/)?.[1];
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+    return url; // for direct mp4 links
   };
 
-  // Get translated name/description if available
-  const getTranslated = (field: string | { [lang: string]: string }) => {
-    if (typeof field === 'string') return field;
-    return field[lang] || field['en'] || Object.values(field)[0] || '';
-  };
-
-  // --- IMAGE GALLERY: Gather all unique images from all variants ---
-  const allImageUrls = Array.from(new Set(
-    (product.variants || [])
-      .flatMap(variant => variant.imageUrls || [])
-      .filter(Boolean)
-  ));
-
-  // --- VIDEO HANDLING: Support direct video and YouTube/Vimeo embeds ---
-  function getVideoEmbedType(url: string | null): 'video' | 'youtube' | 'vimeo' | null {
-    if (!url) return null;
-    if (/youtube\.com|youtu\.be/.test(url)) return 'youtube';
-    if (/vimeo\.com/.test(url)) return 'vimeo';
-    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return 'video';
-    // fallback: treat as direct video if it starts with http(s)
-    if (/^https?:\/\//.test(url)) return 'video';
-    return null;
-  }
-
-  function getYouTubeId(url: string): string | null {
-    const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([\w-]{11})/);
-    return match ? match[1] : null;
-  }
-
-  function getVimeoId(url: string): string | null {
-    const match = url.match(/vimeo\.com\/(\d+)/);
-    return match ? match[1] : null;
-  }
+  const videoEmbedUrl = firstVideoUrl ? getVideoEmbedUrl(firstVideoUrl) : null;
 
   return (
     <div className="container mx-auto py-8 lg:py-12">
@@ -219,201 +192,164 @@ export default function ProductDetailPage() {
         <div className="grid md:grid-cols-2 gap-0">
           {/* Media Section with Tabs */}
           <div>
-            <Tabs defaultValue="gallery" className="w-full" key={currentDisplayVariant?.id || 'media-tabs'}> {/* Add key to Tabs to force re-render content */}
+            <Tabs defaultValue="gallery" className="w-full" key={currentDisplayVariant?.id}>
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="gallery" disabled={effectiveImageUrls.length === 0}>
                   <ImageIcon className="mr-2 h-4 w-4" /> Image Gallery
                 </TabsTrigger>
-                <TabsTrigger value="video" disabled={!firstVideoUrl}>
+                <TabsTrigger value="video" disabled={!videoEmbedUrl}>
                   <Film className="mr-2 h-4 w-4" /> Video
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="gallery">
-                <div className="p-1 md:p-2">
-                  <div className="relative aspect-[4/3] bg-muted/30 flex items-center justify-center rounded-md overflow-hidden">
-                    <Image
-                      src={imageToDisplay}
-                      alt={`${getTranslated(product.name)} - ${currentDisplayVariant?.color.name || ''} - Image ${selectedImageIndex + 1}`}
-                      fill
-                      className="object-contain max-h-[60vh] md:max-h-full w-auto"
-                      onError={() => setMainImageError(true)}
-                      data-ai-hint={`${product.categoryId || 'product'} ${product.brand || ''} detail view`}
-                      priority
-                      key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-img-${selectedImageIndex}` : `img-${selectedImageIndex}`}
-                    />
+              <TabsContent value="gallery" className="p-1 md:p-2">
+                <div className="relative aspect-[4/3] bg-muted/30 flex items-center justify-center rounded-md overflow-hidden">
+                  <Image
+                    src={imageToDisplay}
+                    alt={`${getTranslated(product.name)} - ${currentDisplayVariant?.color.name || ''} - Image ${selectedImageIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    onError={() => setMainImageError(true)}
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+                {effectiveImageUrls.length > 1 && (
+                  <div className="flex space-x-2 mt-3 p-2 overflow-x-auto justify-center">
+                    {effectiveImageUrls.map((url, index) => (
+                      <button
+                        key={url}
+                        onClick={() => {
+                          setSelectedImageIndex(index);
+                          setMainImageError(false);
+                        }}
+                        className={cn(
+                          "w-20 h-20 relative rounded-md overflow-hidden border-2 transition-colors",
+                          selectedImageIndex === index ? 'border-primary' : 'border-transparent hover:border-primary/50'
+                        )}
+                      >
+                        <Image src={url} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="80px" />
+                      </button>
+                    ))}
                   </div>
-                  {allImageUrls.length > 1 && (
-                    <div className="flex space-x-2 mt-3 p-2 overflow-x-auto justify-center">
-                      {allImageUrls.map((rawUrl, index) => {
-                        const sanitizedThumbnailUrl = sanitizeImageUrlString(rawUrl);
-                        if (!sanitizedThumbnailUrl) return null;
-                        return (
-                          <button
-                            key={`all-thumb-${index}`}
-                            onClick={() => {
-                              setSelectedImageIndex(index);
-                              setMainImageError(false);
-                            }}
-                            className={cn(
-                              "relative w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 shrink-0",
-                              selectedImageIndex === index ? "border-primary ring-2 ring-primary" : "border-transparent hover:border-muted-foreground"
-                            )}
-                          >
-                            <Image
-                              src={sanitizedThumbnailUrl || 'https://placehold.co/100x100.png'}
-                              alt={`Thumbnail ${index + 1}`}
-                              fill
-                              sizes="80px"
-                              className="object-cover"
-                              data-ai-hint={`${product.categoryId || 'product'} thumbnail`}
-                            />
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                )}
               </TabsContent>
-              <TabsContent value="video">
-                <div className="p-1 md:p-2">
-                  {firstVideoUrl ? (() => {
-                    const embedType = getVideoEmbedType(firstVideoUrl);
-                    if (embedType === 'youtube') {
-                      const ytId = getYouTubeId(firstVideoUrl);
-                      return ytId ? (
-                        <div className="aspect-video bg-black rounded-md overflow-hidden">
-                          <iframe
-                            src={`https://www.youtube.com/embed/${ytId}`}
-                            title="YouTube video player"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="w-full h-full"
-                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-yt` : 'yt'}
-                          />
-                        </div>
-                      ) : null;
-                    } else if (embedType === 'vimeo') {
-                      const vimeoId = getVimeoId(firstVideoUrl);
-                      return vimeoId ? (
-                        <div className="aspect-video bg-black rounded-md overflow-hidden">
-                          <iframe
-                            src={`https://player.vimeo.com/video/${vimeoId}`}
-                            title="Vimeo video player"
-                            allow="autoplay; fullscreen; picture-in-picture"
-                            allowFullScreen
-                            className="w-full h-full"
-                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-vimeo` : 'vimeo'}
-                          />
-                        </div>
-                      ) : null;
-                    } else if (embedType === 'video') {
-                      return (
-                        <div className="aspect-video bg-black rounded-md overflow-hidden">
-                          <video
-                            src={firstVideoUrl}
-                            controls
-                            className="w-full h-full object-contain"
-                            preload="metadata"
-                            key={currentDisplayVariant?.id ? `${currentDisplayVariant.id}-video` : 'video'}
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                        </div>
-                      );
-                    }
-                    return null;
-                  })() : (
-                    <div className="aspect-video flex items-center justify-center bg-muted/30 rounded-md">
-                      <p className="text-muted-foreground">No video available for this variant.</p>
-                    </div>
-                  )}
-                </div>
+              <TabsContent value="video" className="p-1 md:p-2">
+                {videoEmbedUrl && (
+                  <div className="relative aspect-video bg-black rounded-md overflow-hidden">
+                    <iframe
+                      src={videoEmbedUrl}
+                      title="Product Video"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                    ></iframe>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
 
           {/* Details Section */}
-          <div className="p-6 md:p-10 flex flex-col">
-            {product.brand && (
-              <Badge variant="secondary" className="w-fit mb-3 text-sm">{product.brand}</Badge>
-            )}
-            <h1 className="text-3xl lg:text-4xl font-bold text-primary mb-3">{getTranslated(product.name)}</h1>
-
-            <p key={currentDisplayVariant?.id ? currentDisplayVariant.id + '-price' : product.id + '-price'} className="text-2xl font-semibold text-accent mb-6">
-              {typeof displayPrice === 'number' ? `$${displayPrice.toFixed(2)}` : 'Price unavailable'}
-            </p>
-
-            <Separator className="my-6" />
-
-            {product.variants && product.variants.length > 0 && ( // Ensure variants exist before mapping
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-foreground mb-3 flex items-center">
-                  <Palette className="mr-2 h-5 w-5 text-muted-foreground" /> Available Colors:
-                  <span className="ml-2 font-normal text-muted-foreground">{currentDisplayVariant?.color.name || 'N/A'}</span>
-                </h3>
-                <div className="flex flex-wrap gap-3">
-                  {product.variants.map(variant => (
-                    <button
-                      key={variant.id}
-                      onClick={() => handleVariantSelect(variant)}
-                      className={cn(
-                        "rounded-full p-0.5 focus:outline-none transition-all duration-150 ease-in-out group",
-                        currentDisplayVariant?.id === variant.id ? "ring-2 ring-offset-2 ring-offset-background ring-primary" : "ring-1 ring-transparent hover:ring-border"
-                      )}
-                      title={variant.color.name}
-                      aria-label={`Select color ${variant.color.name}`}
-                    >
-                      <div
-                        className={cn(
-                          "w-8 h-8 rounded-full border-2 flex items-center justify-center",
-                          currentDisplayVariant?.id === variant.id ? "border-primary" : "border-muted-foreground/50 group-hover:border-muted-foreground"
-                        )}
-                        style={{ backgroundColor: variant.color.hex || (variant.color.name === 'White' ? '#FFFFFF' : (variant.color.name === 'Black' ? '#000000' : '#E0E0E0')) }}
-                      >
-                        {currentDisplayVariant?.id === variant.id && <CheckCircle className="h-4 w-4 text-primary-foreground mix-blend-difference" />}
-                      </div>
-                    </button>
-                  ))}
+          <div className="p-6 lg:p-8 flex flex-col">
+            <div className="flex-grow">
+              {/* Header */}
+              <div className="flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground">
+                    {getTranslated(product.name)}
+                  </h1>
+                  <p className="text-muted-foreground mt-1">
+                    {product.brand && `By ${product.brand}`}
+                  </p>
                 </div>
+                {product.categoryId && (
+                  <Badge variant="outline" className="text-sm">{product.categoryId}</Badge>
+                )}
               </div>
-            )}
 
-            <Separator className="my-6" />
+              {/* Price */}
+              <div className="text-4xl lg:text-5xl font-bold text-primary my-4">
+                ${displayPrice?.toFixed(2) || 'N/A'}
+              </div>
 
-            <div className="space-y-3 mb-8 flex-grow">
-              <h2 className="text-xl font-semibold text-foreground mb-2">Product Description</h2>
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                {getTranslated(product.description) || "No description available."}
-              </p>
-              {product.categoryId && (
-                <div className="pt-3">
-                  <span className="font-medium text-foreground">Category: </span>
-                  <Badge variant="outline">{product.categoryId}</Badge>
+              {/* Variant Selection */}
+              {product.variants && product.variants.length > 1 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 flex items-center">
+                    <Palette className="mr-2 h-5 w-5" /> Available Colors: <span className='font-bold ml-2'>{currentDisplayVariant?.color.name}</span>
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {product.variants.map((variant) => (
+                      <button
+                        key={variant.id}
+                        onClick={() => handleVariantSelect(variant)}
+                        className={cn(
+                          "relative h-10 w-10 rounded-full border-2 transition-transform duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/80",
+                          selectedVariant?.id === variant.id ? 'border-primary scale-110' : 'border-muted-foreground/50 hover:border-primary/70',
+                        )}
+                        style={{ backgroundColor: variant.color.hex || '#ccc' }}
+                        title={variant.color.name}
+                        aria-label={`Select color ${variant.color.name}`}
+                      >
+                        {selectedVariant?.id === variant.id && (
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <CheckCircle className="h-6 w-6 text-white" style={{ mixBlendMode: 'difference' }} />
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <Separator className="my-6" />
+
+              {/* Product Description */}
+              <div>
+                <h3 className="text-xl font-bold mb-2">Product Description</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap">{getTranslated(product.description)}</p>
+              </div>
+
+              {/* Tags Section */}
+              {product.tags && product.tags.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-3">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.tags.map((tag, index) => (
+                      <Badge key={`${tag}-${index}`} variant="secondary" className="text-sm">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
 
-            <Separator className="my-6" />
+            <div className="mt-auto pt-6">
+              <Separator className="my-6" />
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                onClick={handleAddToCart}
-                disabled={!currentDisplayVariant}
-              >
-                <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="flex-1"
-                onClick={handleToggleWishlist}
-                disabled={!isWishlistLoaded}
-              >
-                <Heart className={cn("mr-2 h-5 w-5", isWishlisted && "fill-current text-red-500")} />
-                {isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-              </Button>
+              {/* Action Buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Button
+                  size="lg"
+                  className="w-full"
+                  onClick={handleAddToCart}
+                  disabled={!currentDisplayVariant}
+                >
+                  <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleToggleWishlist}
+                  disabled={!isWishlistLoaded}
+                >
+                  <Heart className={cn("mr-2 h-5 w-5", isWishlisted && "fill-current text-red-500")} />
+                  {isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

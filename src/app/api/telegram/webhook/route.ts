@@ -30,16 +30,8 @@ interface ProductState {
         variants: Variant[]
     }
     processing: boolean
-    variantStep?:
-    | 'colorName'
-    | 'colorHex'
-    | 'colorId'
-    | 'price'
-    | 'stock'
-    | 'images'
-    | 'videos'
+    variantStep?: 'colorName' | 'colorHex' | 'colorId' | 'price' | 'stock' | 'images' | 'videos'
     variant?: Partial<Variant>
-    editing?: boolean
     editVariantIndex?: number
     editVariantField?: keyof Variant
 }
@@ -49,7 +41,7 @@ const userStates: Record<string, ProductState> = {}
 const KEYBOARDS = {
     REPLY: {
         keyboard: [['⬅️ Previous'], ['✅ Skip', '❌ Cancel']],
-        resize_keyboard: true
+        resize_keyboard: true,
     },
     NEW: { keyboard: [['➕ New Product']], resize_keyboard: true },
     EDIT_FIELDS: {
@@ -57,13 +49,16 @@ const KEYBOARDS = {
             ['Name', 'Brand', 'Description'],
             ['Base Price', 'Category', 'Tags'],
             ['Variants'],
-            ['⬅️ Back', '❌ Cancel']
+            ['⬅️ Back', '❌ Cancel'],
         ],
-        resize_keyboard: true
+        resize_keyboard: true,
     },
     VARIANTS_OVERVIEW: {
-        keyboard: [['➕ Add Variant', '✏️ Edit Variant'], ['✅ Publish', '❌ Cancel']],
-        resize_keyboard: true
+        keyboard: [
+            ['➕ Add Variant', '✏️ Edit Variant', '✏️ Edit Product'],
+            ['✅ Publish', '❌ Cancel'],
+        ],
+        resize_keyboard: true,
     },
     DONE_CANCEL: { keyboard: [['✅ Done', '❌ Skip']], resize_keyboard: true },
     SELECT_VARIANT: { keyboard: [], resize_keyboard: true },
@@ -71,10 +66,10 @@ const KEYBOARDS = {
         keyboard: [
             ['Color Name', 'Color HEX', 'Price'],
             ['Stock', 'Images', 'Videos'],
-            ['⬅️ Back', '❌ Cancel']
+            ['⬅️ Back', '❌ Cancel'],
         ],
-        resize_keyboard: true
-    }
+        resize_keyboard: true,
+    },
 }
 
 async function sendTelegramMessage(
@@ -86,7 +81,7 @@ async function sendTelegramMessage(
     await fetch(`${TELEGRAM_API_URL}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', reply_markup: keyboard })
+        body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML', reply_markup: keyboard }),
     })
 }
 
@@ -132,7 +127,7 @@ async function handleProductCreation(
     const payload = {
         ...data,
         basePrice: Number(data.basePrice) || 0,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
     }
     try {
         const docRef = await db.collection('products').add(payload)
@@ -175,9 +170,9 @@ export async function POST(req: Request) {
                 basePrice: '',
                 categoryId: '',
                 tags: [],
-                variants: []
+                variants: [],
             },
-            processing: false
+            processing: false,
         }
     }
     const state = userStates[chatId]
@@ -199,9 +194,9 @@ export async function POST(req: Request) {
                 basePrice: '',
                 categoryId: '',
                 tags: [],
-                variants: []
+                variants: [],
             },
-            processing: false
+            processing: false,
         }
         await sendTelegramMessage(chatId, '👋 Enter product name:')
         return NextResponse.json({ ok: true })
@@ -222,7 +217,7 @@ export async function POST(req: Request) {
             description: 'basePrice',
             basePrice: 'categoryId',
             categoryId: 'tags',
-            tags: 'variants'
+            tags: 'variants',
         }
         const backMap: Record<string, string> = {
             brand: 'name',
@@ -230,7 +225,7 @@ export async function POST(req: Request) {
             basePrice: 'description',
             categoryId: 'basePrice',
             tags: 'categoryId',
-            variants: 'tags'
+            variants: 'tags',
         }
         const prompts: Record<string, string> = {
             brand: '🏷️ Enter brand name:',
@@ -238,7 +233,7 @@ export async function POST(req: Request) {
             basePrice: '💵 Enter base price (numeric):',
             categoryId: '📁 Enter category ID:',
             tags: '🏷️ Enter tags (comma-separated):',
-            variants: formatProductOverview(state.data)
+            variants: formatProductOverview(state.data),
         }
 
         if (text === '✅ Skip') {
@@ -263,13 +258,12 @@ export async function POST(req: Request) {
         }
     }
 
-    // Variant sub-flow (colors → price → stock → uploads)
+    // Variant sub-flow
     if (state.variantStep && !['images', 'videos'].includes(state.variantStep)) {
-        state.variant ??= { imageUrls: [], videoUrls: [] }
+        state.variant ||= { imageUrls: [], videoUrls: [] }
         const subSteps = ['colorName', 'colorHex', 'colorId', 'price', 'stock'] as const
         let idx = subSteps.indexOf(state.variantStep as any)
 
-        // handle Previous
         if (text === '⬅️ Previous') {
             if (idx > 0) {
                 state.variantStep = subSteps[idx - 1]
@@ -283,7 +277,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ ok: true })
         }
 
-        // process input for current step
         switch (state.variantStep) {
             case 'colorName':
                 if (text !== '❌ Skip') state.variant.color = { name: text, hex: '', id: '' }
@@ -308,8 +301,6 @@ export async function POST(req: Request) {
                 break
         }
 
-        // advance to next
-        const prevStep = state.variantStep
         if (state.variantStep === 'stock') {
             state.variantStep = 'images'
         } else {
@@ -317,7 +308,6 @@ export async function POST(req: Request) {
             state.variantStep = subSteps[idx]
         }
 
-        // prompt for new step
         switch (state.variantStep) {
             case 'colorHex':
                 await sendTelegramMessage(chatId, '🎨 Enter color HEX (e.g. #6e371b):')
@@ -344,7 +334,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
     }
 
-    // Main steps
+    // Main steps & Edit fields
     switch (state.step) {
         case 'name':
             state.data.name = text
@@ -392,8 +382,48 @@ export async function POST(req: Request) {
                 KEYBOARDS.SELECT_VARIANT.keyboard = opts
                 state.step = 'select_variant'
                 await sendTelegramMessage(chatId, 'Select variant to edit:', KEYBOARDS.SELECT_VARIANT)
+            } else if (text === '✏️ Edit Product') {
+                state.step = 'edit_fields'
+                await sendTelegramMessage(chatId, 'Select product field to edit:', KEYBOARDS.EDIT_FIELDS)
             } else if (text === '✅ Publish') {
                 await handleProductCreation(chatId, state.data)
+            }
+            break
+        case 'edit_fields':
+            switch (text) {
+                case 'Name':
+                    state.step = 'name'
+                    await sendTelegramMessage(chatId, '🏷️ Enter product name:')
+                    break
+                case 'Brand':
+                    state.step = 'brand'
+                    await sendTelegramMessage(chatId, '🏷️ Enter brand name:')
+                    break
+                case 'Description':
+                    state.step = 'description'
+                    await sendTelegramMessage(chatId, '📝 Enter product description:')
+                    break
+                case 'Base Price':
+                    state.step = 'basePrice'
+                    await sendTelegramMessage(chatId, '💵 Enter base price (numeric):')
+                    break
+                case 'Category':
+                    state.step = 'categoryId'
+                    await sendTelegramMessage(chatId, '📁 Enter category ID:')
+                    break
+                case 'Tags':
+                    state.step = 'tags'
+                    await sendTelegramMessage(chatId, '🏷️ Enter tags (comma-separated):')
+                    break
+                case 'Variants':
+                case '⬅️ Back':
+                    state.step = 'variants'
+                    await sendTelegramMessage(chatId, formatProductOverview(state.data), KEYBOARDS.VARIANTS_OVERVIEW)
+                    break
+                case '❌ Cancel':
+                    resetUserState(chatId)
+                    await sendTelegramMessage(chatId, '🚫 Cancelled.', KEYBOARDS.NEW)
+                    break
             }
             break
         case 'select_variant':
@@ -416,7 +446,7 @@ export async function POST(req: Request) {
                 Price: 'price',
                 Stock: 'stock',
                 Images: 'imageUrls',
-                Videos: 'videoUrls'
+                Videos: 'videoUrls',
             }
             if (fieldMap[text]) {
                 state.editVariantField = fieldMap[text]
@@ -445,7 +475,7 @@ export async function POST(req: Request) {
             break
     }
 
-    // 📸 Photo upload branch
+    // Image uploads
     if (state.variantStep === 'images') {
         if (text === '⬅️ Previous') {
             state.variantStep = 'stock'
@@ -471,25 +501,17 @@ export async function POST(req: Request) {
             await sendTelegramMessage(chatId, `🖼 Link saved. ✅ Done or ❌ Skip.`, KEYBOARDS.DONE_CANCEL)
         } else if (text === '✅ Done' || text === '❌ Skip') {
             state.variantStep = 'videos'
-            await sendTelegramMessage(
-                chatId,
-                'Now send videos (upload or link), then ✅ Done or ❌ Skip.',
-                KEYBOARDS.DONE_CANCEL
-            )
+            await sendTelegramMessage(chatId, 'Now send videos (upload or link), then ✅ Done or ❌ Skip.', KEYBOARDS.DONE_CANCEL)
         }
         state.processing = false
         return NextResponse.json({ ok: true })
     }
 
-    // 🎥 Video upload branch
+    // Video uploads & finalize variant
     if (state.variantStep === 'videos') {
         if (text === '⬅️ Previous') {
             state.variantStep = 'images'
-            await sendTelegramMessage(
-                chatId,
-                '📤 Now upload photos (upload or link), then ✅ Done or ❌ Skip.',
-                KEYBOARDS.DONE_CANCEL
-            )
+            await sendTelegramMessage(chatId, '📤 Now upload photos (upload or link), then ✅ Done or ❌ Skip.', KEYBOARDS.DONE_CANCEL)
             state.processing = false
             return NextResponse.json({ ok: true })
         }
@@ -510,12 +532,8 @@ export async function POST(req: Request) {
             state.variant!.videoUrls!.push(text)
             await sendTelegramMessage(chatId, `🎥 Link saved. ✅ Done or ❌ Skip.`, KEYBOARDS.DONE_CANCEL)
         } else if (text === '✅ Done' || text === '❌ Skip') {
-            // finalize new or edited variant
             if (state.editVariantIndex != null) {
-                state.data.variants[state.editVariantIndex] = {
-                    ...state.data.variants[state.editVariantIndex],
-                    ...state.variant!
-                } as Variant
+                state.data.variants[state.editVariantIndex] = { ...state.data.variants[state.editVariantIndex], ...state.variant! } as Variant
             } else {
                 state.data.variants.push(state.variant as Variant)
             }
@@ -523,17 +541,13 @@ export async function POST(req: Request) {
             delete state.variantStep
             delete state.editVariantIndex
             delete state.editVariantField
-            await sendTelegramMessage(
-                chatId,
-                `✅ Variant saved!\n\n${formatProductOverview(state.data)}`,
-                KEYBOARDS.VARIANTS_OVERVIEW
-            )
+            await sendTelegramMessage(chatId, `✅ Variant saved!\n\n${formatProductOverview(state.data)}`, KEYBOARDS.VARIANTS_OVERVIEW)
         }
         state.processing = false
         return NextResponse.json({ ok: true })
     }
 
-    // finally clear processing flag
+    // Clear processing flag and end
     state.processing = false
     return NextResponse.json({ ok: true })
 }
