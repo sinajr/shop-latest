@@ -1,5 +1,5 @@
-```ts
-// api/telegram/webhook/route.ts
+ts
+api/telegram/webhook/route.ts
 import { NextResponse } from 'next/server'
 import { getAdminDb } from '@/lib/firebase/admin'
 
@@ -398,4 +398,3 @@ export async function POST(req: Request) {
     state.processing = false
     return NextResponse.json({ ok: true })
 }
-```
