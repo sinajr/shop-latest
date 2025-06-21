@@ -208,7 +208,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
     }
 
-    // Navigation: Skip & Previous (for main steps)
+    // Navigation: Skip & Previous
     if (!state.variantStep) {
         const advanceMap: Record<string, string> = {
             name: 'brand',
@@ -257,12 +257,11 @@ export async function POST(req: Request) {
         }
     }
 
-    // Variant creation/editing sub-flow (excluding uploads)
+    // Variant sub-flow (excluding uploads)
     if (state.variantStep && !['images', 'videos'].includes(state.variantStep)) {
         const subSteps = ['colorName', 'colorHex', 'colorId', 'price', 'stock'] as const
         let idx = subSteps.indexOf(state.variantStep as any)
 
-        // allow going back
         if (text === '⬅️ Previous') {
             if (idx > 0) {
                 state.variantStep = subSteps[idx - 1]
@@ -276,7 +275,6 @@ export async function POST(req: Request) {
             return NextResponse.json({ ok: true })
         }
 
-        // assign current step value
         switch (state.variantStep) {
             case 'colorName':
                 if (text !== '❌ Skip') state.variant!.color.name = text
@@ -301,7 +299,6 @@ export async function POST(req: Request) {
                 break
         }
 
-        // advance to next or to uploads
         if (state.variantStep === 'stock') {
             state.variantStep = 'images'
         } else {
@@ -309,7 +306,6 @@ export async function POST(req: Request) {
             state.variantStep = subSteps[idx]
         }
 
-        // prompt next
         switch (state.variantStep) {
             case 'colorHex':
                 await sendTelegramMessage(chatId, '🎨 Enter color HEX (e.g. #6e371b):')
@@ -336,7 +332,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
     }
 
-    // Handle main steps, product-field edits, variant selection
+    // Main steps, select/edit flows
     switch (state.step) {
         case 'name':
             state.data.name = text
@@ -385,7 +381,7 @@ export async function POST(req: Request) {
                 }
                 await sendTelegramMessage(chatId, '🎨 Enter color name:')
             } else if (text === '✏️ Edit Variant') {
-                const opts = state.data.variants.map((v, i) => [`Variant #${i + 1}`])
+                const opts = state.data.variants.map((_, i) => [`Variant #${i + 1}`])
                 opts.push(['⬅️ Back', '❌ Cancel'])
                 KEYBOARDS.SELECT_VARIANT.keyboard = opts
                 state.step = 'select_variant'
@@ -451,15 +447,14 @@ export async function POST(req: Request) {
             const editMap: Record<string, ProductState['variantStep']> = {
                 'Color Name': 'colorName',
                 'Color HEX': 'colorHex',
-                'Price': 'price',
-                'Stock': 'stock',
-                'Images': 'images',
-                'Videos': 'videos',
+                Price: 'price',
+                Stock: 'stock',
+                Images: 'images',
+                Videos: 'videos',
             }
             const vstep = editMap[text]
             if (vstep) {
                 state.variantStep = vstep
-                // clone existing
                 const existing = state.data.variants[state.editVariantIndex!]
                 state.variant = {
                     color: { ...existing.color },
@@ -468,7 +463,6 @@ export async function POST(req: Request) {
                     imageUrls: [...existing.imageUrls],
                     videoUrls: [...existing.videoUrls],
                 }
-                // prompt
                 switch (vstep) {
                     case 'colorName':
                         await sendTelegramMessage(chatId, '🎨 Enter new color name:')
@@ -564,7 +558,6 @@ export async function POST(req: Request) {
             state.variant!.videoUrls!.push(text)
             await sendTelegramMessage(chatId, `🎥 Link saved. ✅ Done or ❌ Skip.`, KEYBOARDS.DONE_CANCEL)
         } else if (text === '✅ Done' || text === '❌ Skip') {
-            // update or push
             if (state.editVariantIndex != null) {
                 state.data.variants[state.editVariantIndex] = state.variant as Variant
             } else {
@@ -573,6 +566,8 @@ export async function POST(req: Request) {
             delete state.variant
             delete state.variantStep
             delete state.editVariantIndex
+            // reset to variants so Publish works
+            state.step = 'variants'
             await sendTelegramMessage(
                 chatId,
                 `✅ Variant saved!\n\n${formatProductOverview(state.data)}`,
@@ -583,7 +578,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
     }
 
-    // clear processing
+    // clear processing flag
     state.processing = false
     return NextResponse.json({ ok: true })
 }
