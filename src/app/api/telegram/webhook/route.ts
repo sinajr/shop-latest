@@ -1,10 +1,8 @@
-ts
-api/telegram/webhook/route.ts
 import { NextResponse } from 'next/server'
 import { getAdminDb } from '@/lib/firebase/admin'
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!
-const TELEGRAM_API_URL   = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
+const TELEGRAM_API_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}`
 const ADMIN_TELEGRAM_IDS = (process.env.ADMIN_TELEGRAM_IDS || '5900684159')
     .split(',')
     .map(id => id.trim())
@@ -42,7 +40,6 @@ interface ProductState {
     | 'videos'
     variant?: Partial<Variant>
     editing?: boolean
-    // for editing existing variant
     editVariantIndex?: number
     editVariantField?: keyof Variant
 }
@@ -258,11 +255,11 @@ export async function POST(req: Request) {
             await sendTelegramMessage(chatId, '💵 Enter base price (numeric):')
             break
         case 'basePrice':
-            const bp = parseFloat(text)
-            if (isNaN(bp)) {
+            const bp2 = parseFloat(text)
+            if (isNaN(bp2)) {
                 await sendTelegramMessage(chatId, '❌ Invalid price. Enter a number.')
             } else {
-                state.data.basePrice = bp
+                state.data.basePrice = bp2
                 state.step = 'categoryId'
                 await sendTelegramMessage(chatId, '📁 Enter category ID:')
             }
@@ -283,7 +280,6 @@ export async function POST(req: Request) {
                 state.variant = { imageUrls: [], videoUrls: [] }
                 await sendTelegramMessage(chatId, '🎨 Enter color name:')
             } else if (text === '✏️ Edit Variant') {
-                // Build dynamic keyboard
                 const opts = state.data.variants.map((_, i) => [`Variant #${i + 1}`])
                 opts.push(['⬅️ Back', '❌ Cancel'])
                 KEYBOARDS.SELECT_VARIANT.keyboard = opts
@@ -307,7 +303,6 @@ export async function POST(req: Request) {
             }
             break
         case 'edit_variant':
-            // Map button text to field
             const fieldMap: Record<string, keyof Variant> = {
                 'Color Name': 'color',
                 'Color HEX': 'color',
@@ -339,12 +334,12 @@ export async function POST(req: Request) {
             break
     }
 
-    // Image/Video flows for new or editing variant
+    // Upload flows
     if (state.variantStep === 'images') {
         if (isPhoto) {
             const best = msg.photo![msg.photo!.length - 1]
             if (best.file_size > FILE_SIZE_LIMIT) {
-                await sendTelegramMessage(chatId, '❌ Photo too large. Max 10 MB.')
+                await sendTelegramMessage(chatId, '❌ Photo too large. Max 10 MB.')
             } else {
                 const url = await getTelegramFileUrl(best.file_id)
                 state.variant!.imageUrls!.push(url)
@@ -364,7 +359,7 @@ export async function POST(req: Request) {
         if (isVideo) {
             const v = msg.video!
             if (v.file_size > FILE_SIZE_LIMIT) {
-                await sendTelegramMessage(chatId, '❌ Video too large. Max 10 MB.')
+                await sendTelegramMessage(chatId, '❌ Video too large. Max 10 MB.')
             } else {
                 const url = await getTelegramFileUrl(v.file_id)
                 state.variant!.videoUrls!.push(url)
@@ -374,12 +369,9 @@ export async function POST(req: Request) {
             state.variant!.videoUrls!.push(text)
             await sendTelegramMessage(chatId, `🎥 Link saved. ✅ Done or ❌ Skip.`, KEYBOARDS.DONE_CANCEL)
         } else if (text === '✅ Done' || text === '❌ Skip') {
-            // finalize new or edited variant
             if (state.editVariantIndex != null) {
-                const idx = state.editVariantIndex
-                // merge updated imageUrls/videoUrls if editing
-                state.data.variants[idx] = {
-                    ...state.data.variants[idx],
+                state.data.variants[state.editVariantIndex] = {
+                    ...state.data.variants[state.editVariantIndex],
                     ...state.variant!
                 } as Variant
             } else {
