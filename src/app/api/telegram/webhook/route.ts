@@ -237,6 +237,92 @@ export async function POST(req: Request) {
         }
     }
 
+    // Variant sub-flow: colors → price → stock → uploads
+    if (state.variantStep && !['images', 'videos'].includes(state.variantStep)) {
+        state.variant ??= { imageUrls: [], videoUrls: [] }
+
+        // handle Previous and Skip in variant fields
+        const subSteps = ['colorName', 'colorHex', 'colorId', 'price', 'stock']
+        const idx = subSteps.indexOf(state.variantStep)
+        if (text === '⬅️ Previous') {
+            if (idx > 0) {
+                state.variantStep = subSteps[idx - 1] as any
+            } else {
+                state.step = 'variants'
+                await sendTelegramMessage(chatId, formatProductOverview(state.data), KEYBOARDS.VARIANTS_OVERVIEW)
+                state.processing = false
+                return NextResponse.json({ ok: true })
+            }
+        }
+        if (text === '❌ Skip') {
+            if (idx < subSteps.length - 1) {
+                state.variantStep = subSteps[idx + 1] as any
+            } else {
+                state.variantStep = 'images'
+            }
+        }
+
+        // prompt based on variantStep
+        switch (state.variantStep) {
+            case 'colorName':
+                await sendTelegramMessage(chatId, '🎨 Enter color name:')
+                break
+            case 'colorHex':
+                state.variant.color ??= { name: '', hex: '', id: '' }
+                await sendTelegramMessage(chatId, '🎨 Enter color HEX (e.g. #6e371b):')
+                break
+            case 'colorId':
+                await sendTelegramMessage(chatId, '🆔 Enter color ID:')
+                break
+            case 'price':
+                await sendTelegramMessage(chatId, '💰 Enter variant price (numeric):')
+                break
+            case 'stock':
+                await sendTelegramMessage(chatId, '📦 Enter stock quantity (integer):')
+                break
+        }
+
+        // process entry
+        switch (state.variantStep) {
+            case 'colorName':
+                if (text && !['⬅️ Previous', '❌ Skip'].includes(text)) state.variant.color!.name = text
+                break
+            case 'colorHex':
+                if (text && !['⬅️ Previous', '❌ Skip'].includes(text)) state.variant.color!.hex = text
+                break
+            case 'colorId':
+                if (text && !['⬅️ Previous', '❌ Skip'].includes(text)) state.variant.color!.id = text
+                break
+            case 'price':
+                if (!['⬅️ Previous', '❌ Skip'].includes(text)) {
+                    const val = parseFloat(text)
+                    state.variant.price = isNaN(val) ? 0 : val
+                }
+                break
+            case 'stock':
+                if (!['⬅️ Previous', '❌ Skip'].includes(text)) {
+                    const val = parseInt(text, 10)
+                    state.variant.stock = isNaN(val) ? 0 : val
+                }
+                break
+        }
+
+        // move to next if not previous
+        if (!['⬅️ Previous'].includes(text)) {
+            if (state.variantStep === 'stock') {
+                state.variantStep = 'images'
+            } else if (state.variantStep !== 'images') {
+                const nextIdx = subSteps.indexOf(state.variantStep) + 1
+                if (nextIdx < subSteps.length) {
+                    state.variantStep = subSteps[nextIdx] as any
+                }
+            }
+        }
+
+        state.processing = false
+        return NextResponse.json({ ok: true })
+    }
+
     // Main steps
     switch (state.step) {
         case 'name':
@@ -336,6 +422,12 @@ export async function POST(req: Request) {
 
     // Upload flows
     if (state.variantStep === 'images') {
+        if (text === '⬅️ Previous') {
+            state.variantStep = 'stock'
+            await sendTelegramMessage(chatId, '📦 Enter stock quantity (integer):', KEYBOARDS.REPLY)
+            state.processing = false
+            return NextResponse.json({ ok: true })
+        }
         if (isPhoto) {
             const best = msg.photo![msg.photo!.length - 1]
             if (best.file_size > FILE_SIZE_LIMIT) {
@@ -356,6 +448,12 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true })
     }
     if (state.variantStep === 'videos') {
+        if (text === '⬅️ Previous') {
+            state.variantStep = 'images'
+            await sendTelegramMessage(chatId, '📤 Now upload photos (upload or link), then ✅ Done or ❌ Skip.', KEYBOARDS.DONE_CANCEL)
+            state.processing = false
+            return NextResponse.json({ ok: true })
+        }
         if (isVideo) {
             const v = msg.video!
             if (v.file_size > FILE_SIZE_LIMIT) {
@@ -369,6 +467,7 @@ export async function POST(req: Request) {
             state.variant!.videoUrls!.push(text)
             await sendTelegramMessage(chatId, `🎥 Link saved. ✅ Done or ❌ Skip.`, KEYBOARDS.DONE_CANCEL)
         } else if (text === '✅ Done' || text === '❌ Skip') {
+            // finalize new or edited variant
             if (state.editVariantIndex != null) {
                 state.data.variants[state.editVariantIndex] = {
                     ...state.data.variants[state.editVariantIndex],
@@ -381,7 +480,9 @@ export async function POST(req: Request) {
             delete state.variantStep
             delete state.editVariantIndex
             delete state.editVariantField
-            await sendTelegramMessage(chatId, `✅ Variant saved!\n\n${formatProductOverview(state.data)}`, KEYBOARDS.VARIANTS_OVERVIEW)
+            await sendTelegramMessage(chatId, `✅ Variant saved!
+
+${formatProductOverview(state.data)}`, KEYBOARDS.VARIANTS_OVERVIEW)
         }
         state.processing = false
         return NextResponse.json({ ok: true })
