@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { ParticlesBackground } from './particles-background';
 import { INTERACTIVE_BOX_PARTICLE_OPTIONS, DEFAULT_FOOTER_PARTICLE_OPTIONS } from '@/config/particles-options';
@@ -94,11 +94,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="group flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 text-accent shrink-0 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-in-out" />
-                <a href="mailto:support@elitestufftrade.com" className="group-hover:text-primary group-hover:underline transform group-hover:-translate-y-px transition-all duration-300 ease-in-out inline-block">support@elitestufftrade.com</a>
-              </li>
-              <li className="group flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone className="h-4 w-4 text-accent shrink-0 group-hover:text-primary group-hover:scale-110 transition-all duration-300 ease-in-out" />
-                <a href="tel:+18005555893" className="group-hover:text-primary group-hover:underline transform group-hover:-translate-y-px transition-all duration-300 ease-in-out inline-block">+1 (800) 555-LUXE</a>
+                <a href="mailto:info@elitestufftrade.com" className="group-hover:text-primary group-hover:underline transform group-hover:-translate-y-px transition-all duration-300 ease-in-out inline-block">info@elitestufftrade.com</a>
               </li>
               <li className="text-sm text-muted-foreground pt-2">
                 {t('footer.contact.addressLine1')}<br />
